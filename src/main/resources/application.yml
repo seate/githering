@@ -1,0 +1,58 @@
+spring:
+    #config:
+    #activate:
+    #on-profile: dev
+
+    origin: http://localhost:8080
+
+
+    datasource:
+        url: jdbc:h2:tcp://localhost/~/test
+        driver-class-name: org.h2.Driver
+        username: sa
+
+
+    jpa:
+        #show-sql: true
+        hibernate:
+            ddl-auto: create-drop
+        properties:
+            hibernate:
+                format_sql: true
+
+    data:
+        redis:
+            host: localhost
+            port: 6379
+
+    jackson:
+        serialization:
+            write-date-keys-as-timestamps: false
+
+
+
+
+jwt:
+    accessToken:
+        tokenPrefix: 'Bearer '
+        GettingHeaderName: 'Authorization'
+        SendingHeaderName: 'accessToken'
+        secret: 'ThisIsAccessTokenSecretKey' # ??? ?? github secret? ???? ?? ?? ??? ?
+        expirationMs: 900000 # 1000 * 60 * 15 -> 15 minutes
+        #expirationMs: 30000 # 1000 * 30 -> 30 seconds for test, ??? ???? accessToken? ?? ?????
+    refreshToken:
+        headerName: 'refreshToken'
+        secret: 'ThisIsRefreshTokenSecretKey' # ??? ?? github secret? ???? ?? ?? ??? ?
+        expirationMs: 1209600000 # 1000 * 60 * 60 * 24 * 14 -> 2 weeks, ??? ???? refreshToken? ?? ?????
+
+Cors:
+    AllowedOriginPatterns: '*'
+    AllowedHeaders: '*'
+    AllowedMethods: '*'
+
+
+
+
+
+
+debug: true
