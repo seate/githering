@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -24,6 +23,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -41,7 +41,7 @@ public class SecurityConfig {
 
     //private final CorsProcessor corsProcessor;
 
-    //private final CorsConfigurationSource corsConfigurationSource;
+    private final CorsConfigurationSource corsConfigurationSource;
 
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -82,16 +82,18 @@ public class SecurityConfig {
     protected SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception{
 
         http
-                .cors(Customizer.withDefaults()) //TODO cors 설정이 적용되는지 봐야함
+                .cors(httpSecurityCorsConfigurer ->
+                    httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource)
+                )
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .headers(headers ->
                         headers
-                                .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
+                                .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)
                                 .cacheControl(HeadersConfigurer.CacheControlConfig::disable))
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .logout(AbstractHttpConfigurer::disable) //TODO ??
+                .logout(AbstractHttpConfigurer::disable)
                 .addFilterBefore(
                         JwtAuthenticationFilter.builder()
                                 .accessTokenHeaderName(accessTokenSendingHeaderName)
