@@ -15,9 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.Base64;
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Component
@@ -25,6 +23,9 @@ public class JwtTokenProvider {
 
     @Value("${jwt.accessToken.tokenPrefix}")
     private String tokenPrefix;
+
+    @Value("${jwt.accessToken.SendingHeaderName}")
+    private String accessTokenSendingHeaderName;
 
     @Value("${jwt.accessToken.GettingHeaderName}")
     private String accessTokenGettingHeaderName;
@@ -145,11 +146,6 @@ public class JwtTokenProvider {
         return expiration - new Date().getTime();
     }
 
-
-    /*public Authentication getAuthentication(PrincipalDetails principalDetails) {
-        return new UsernamePasswordAuthenticationToken(principalDetails, "", principalDetails.getAuthorities());
-    }*/
-
     public Optional<String> getAccessTokenByRequest(HttpServletRequest request) {
         String accessToken = request.getHeader(accessTokenGettingHeaderName);
         if (accessToken == null) return Optional.empty();
@@ -188,7 +184,16 @@ public class JwtTokenProvider {
         }
     }
 
-    /*public String resolveToken(HttpServletRequest request) {
-        return request.getHeader("X-AUTH-TOKEN");
-    }*/
+    public Map<String, Object> generateResponseBody(Long userId, String userEmail) {
+        String accessToken = createAccessToken(userId, userEmail);
+        String refreshToken = createRefreshToken(userId, userEmail);
+
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("id", userId); // body에 userId 추가
+        responseBody.put(accessTokenSendingHeaderName, accessToken); //body에 accessToken 추가
+        responseBody.put(refreshTokenHeaderName, refreshToken); //body에 refreshToken 추가
+
+        return responseBody;
+    }
+
 }

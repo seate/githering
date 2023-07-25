@@ -3,15 +3,16 @@ package com.solution.loginSolution.Common.Config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.solution.loginSolution.JWT.Service.RefreshTokenService;
 import com.solution.loginSolution.JWT.auth.JwtAuthenticationFilter;
-import com.solution.loginSolution.JWT.auth.JwtAuthorizationFilter;
 import com.solution.loginSolution.JWT.auth.JwtTokenProvider;
-import com.solution.loginSolution.User.Normal.Service.UserService;
+import com.solution.loginSolution.User.General.Service.GeneralUserService;
+import com.solution.loginSolution.User.OAuth2.Handler.oAuth2AuthenticationFailureHandler;
+import com.solution.loginSolution.User.OAuth2.Handler.oAuth2AuthenticationSuccessHandler;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -29,17 +30,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    @Value("${jwt.accessToken.SendingHeaderName}")
-    private String accessTokenSendingHeaderName;
-    @Value("${jwt.refreshToken.headerName}")
-    private String refreshTokenHeaderName;
-
-    @Value("${spring.origin}")
-    private String origin;
 
     private final ObjectMapper objectMapper;
-
-    //private final CorsProcessor corsProcessor;
 
     private final CorsConfigurationSource corsConfigurationSource;
 
@@ -47,7 +39,11 @@ public class SecurityConfig {
 
     private final RefreshTokenService refreshTokenService;
 
-    private final UserService userService;
+    private final GeneralUserService generalUserService;
+
+    private final oAuth2AuthenticationSuccessHandler oAuth2SuccessHandler;
+
+    private final oAuth2AuthenticationFailureHandler oAuth2FailureHandler;
 
 
     @Bean
@@ -59,12 +55,18 @@ public class SecurityConfig {
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> {
             web.ignoring().requestMatchers(
-                    // register,emailcheck 시에 security 미적용
+                    // register, emailCheck 시에 security 미적용
                     new AntPathRequestMatcher("/users", "POST"),
                     new AntPathRequestMatcher("/users/emailCheck", "GET"),
 
                     // refreshToken 재발급 시 security 미적용
                     new AntPathRequestMatcher("/token/reIssue", "POST"),
+
+                    // security 제외 시 정상 동작하지 않음
+                    // 아래 경로는 제외하면 안 됨
+                    //new AntPathRequestMatcher("/oauth2/authorization/**", "GET"),
+                    //new AntPathRequestMatcher("/", "GET"),
+                    //new AntPathRequestMatcher("/login", "GET"),
 
                     // swagger-ui 보안 미적용
                     new AntPathRequestMatcher("/swagger-ui/**", "GET"),
@@ -85,31 +87,40 @@ public class SecurityConfig {
                 .cors(httpSecurityCorsConfigurer ->
                     httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource)
                 )
+
                 .csrf(AbstractHttpConfigurer::disable)
-                .formLogin(AbstractHttpConfigurer::disable)
+                //.formLogin(AbstractHttpConfigurer::disable)
+                .formLogin(Customizer.withDefaults()) // TODO 실험용 form login
                 .httpBasic(AbstractHttpConfigurer::disable)
+
                 .headers(headers ->
                         headers
                                 .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)
                                 .cacheControl(HeadersConfigurer.CacheControlConfig::disable))
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
                 .logout(AbstractHttpConfigurer::disable)
+
+                .oauth2Login(oauth2Login ->
+                        oauth2Login
+                                .successHandler(oAuth2SuccessHandler)
+                                .failureHandler(oAuth2FailureHandler)
+                )
+
                 .addFilterBefore(
                         JwtAuthenticationFilter.builder()
-                                .accessTokenHeaderName(accessTokenSendingHeaderName)
-                                .refreshTokenHeaderName(refreshTokenHeaderName)
                                 .authenticationManager(authenticationManager)
                                 .jwtTokenProvider(jwtTokenProvider)
                                 .objectMapper(objectMapper)
                                 .refreshTokenService(refreshTokenService)
-                                .userService(userService)
+                                .generalUserService(generalUserService)
                                 .build(),
                         UsernamePasswordAuthenticationFilter.class
                 )
-                .addFilterAfter(
+                /*.addFilterAfter(
                         new JwtAuthorizationFilter(jwtTokenProvider),
                         UsernamePasswordAuthenticationFilter.class
-                );
+                )*/;
 
         return http.build();
     }
