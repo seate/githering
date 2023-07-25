@@ -9,13 +9,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-
+@Slf4j
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -27,7 +28,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         try {
-            logger.info("authorization 시작 = " + request.getRequestURL());
+            log.debug("authorization 시작: {}", request.getRequestURL());
 
             String accessToken = jwtTokenProvider.getAccessTokenByRequest(request)
                     .orElseThrow(AccessTokenNotExistException::new);
@@ -46,23 +47,15 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             chain.doFilter(request, response); //filter 계속 진행
 
         } catch (AccessTokenExpiredException | RefreshTokenExpiredException e){
-            System.out.println("TokenExpired: " + e.getMessage());
+            log.debug("TokenExpired: ", e);
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         } catch (TokenNotValidException | AccessTokenNotExistException e) { //
-            System.out.println("token not valid: " + e.getMessage());
+            log.warn("TokenNotValid: ", e);
             response.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
         } catch (Exception e) {
-            System.out.println("unhandled error: " + e.getMessage());
+            log.error("unhandled error: ", e);
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "처리되지 않은 에러입니다.");
         }
     }
-
-
-    /*@Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        String requestURL = request.getRequestURL().toString();
-        System.out.println("author requestURL: " + requestURL);
-        return !requestURL.startsWith(origin + "/api/");
-    }*/
 }
