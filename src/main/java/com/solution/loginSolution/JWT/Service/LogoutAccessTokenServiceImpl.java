@@ -10,13 +10,13 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class LogoutAccessTokenServiceImpl implements LogoutAccessTokenService {
 
     private final LogoutRedisRepository logoutRedisRepository;
 
     @Override
+    @Transactional
     public void saveLogoutAccessToken(LogoutAccessTokenRequestDTO logoutAccessTokenRequestDTO) {
         logoutRedisRepository.save(logoutAccessTokenRequestDTO.toEntity());
     }
