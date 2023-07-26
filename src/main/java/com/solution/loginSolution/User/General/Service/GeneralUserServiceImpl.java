@@ -29,7 +29,6 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class GeneralUserServiceImpl implements GeneralUserService {
 
@@ -51,6 +50,7 @@ public class GeneralUserServiceImpl implements GeneralUserService {
 
     // CREATE
     @Override
+    @Transactional
     public void register(UserRegisterRequestDTO userRegisterRequestDTO) throws UserExistException {
         if (generalUserRepository.existsByUserEmail(userRegisterRequestDTO.getUserEmail())) {
             log.warn("UserExistException in register");
@@ -68,6 +68,7 @@ public class GeneralUserServiceImpl implements GeneralUserService {
 
     // DELETE
     @Override
+    @Transactional
     public void withdrawal(Long userId, String accessToken) {
         logout(accessToken);
         GeneralUser generalUser = generalUserRepository.findById(userId).orElseThrow(UserNotExistException::new);
@@ -79,6 +80,7 @@ public class GeneralUserServiceImpl implements GeneralUserService {
     // READ
 
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         GeneralUser generalUser = generalUserRepository.findByUserEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
@@ -87,6 +89,7 @@ public class GeneralUserServiceImpl implements GeneralUserService {
     }
 
     @Override
+    @Transactional
     public void logout(String accessToken) {
         Long remainingTime = jwtTokenProvider.getRemainingTimeByAccessToken(accessToken);
         logoutAccessTokenService.saveLogoutAccessToken(new LogoutAccessTokenRequestDTO(accessToken, remainingTime));
@@ -138,6 +141,7 @@ public class GeneralUserServiceImpl implements GeneralUserService {
 
     // UPDATE
     @Override
+    @Transactional
     public void changePassword(UserChangePasswordRequestDTO userChangePasswordRequestDTO) {
         Long userId = findIdByAuthentication();
         GeneralUser generalUser = generalUserRepository.findById(userId).orElseThrow(UserNotExistException::new);
