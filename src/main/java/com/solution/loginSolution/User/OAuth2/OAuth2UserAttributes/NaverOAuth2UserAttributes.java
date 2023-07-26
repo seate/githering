@@ -1,6 +1,6 @@
 package com.solution.loginSolution.User.OAuth2.OAuth2UserAttributes;
 
-import com.solution.loginSolution.User.Common.enums.UserType;
+import com.solution.loginSolution.User.General.enums.UserType;
 import lombok.Getter;
 
 import java.util.Map;

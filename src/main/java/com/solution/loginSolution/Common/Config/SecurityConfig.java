@@ -3,6 +3,7 @@ package com.solution.loginSolution.Common.Config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.solution.loginSolution.JWT.Service.RefreshTokenService;
 import com.solution.loginSolution.JWT.auth.JwtAuthenticationFilter;
+import com.solution.loginSolution.JWT.auth.JwtAuthorizationFilter;
 import com.solution.loginSolution.JWT.auth.JwtTokenProvider;
 import com.solution.loginSolution.User.General.Service.GeneralUserService;
 import com.solution.loginSolution.User.OAuth2.Handler.oAuth2AuthenticationFailureHandler;
@@ -16,14 +17,12 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
@@ -50,35 +49,6 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> {
-            web.ignoring().requestMatchers(
-                    // register, emailCheck 시에 security 미적용
-                    new AntPathRequestMatcher("/users", "POST"),
-                    new AntPathRequestMatcher("/users/emailCheck", "GET"),
-
-                    // refreshToken 재발급 시 security 미적용
-                    new AntPathRequestMatcher("/token/reIssue", "POST"),
-
-                    // security 제외 시 정상 동작하지 않음
-                    // 아래 경로는 제외하면 안 됨
-                    //new AntPathRequestMatcher("/oauth2/authorization/**", "GET"),
-                    //new AntPathRequestMatcher("/", "GET"),
-                    //new AntPathRequestMatcher("/login", "GET"),
-
-                    // swagger-ui 보안 미적용
-                    new AntPathRequestMatcher("/swagger-ui/**", "GET"),
-                    new AntPathRequestMatcher("/v3/api-docs/**", "GET"),
-
-                    // assets 보안 미적용
-                    new AntPathRequestMatcher("/assets/**", "GET")
-            );
-
-        };
-    }
-
 
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception{
@@ -117,10 +87,10 @@ public class SecurityConfig {
                                 .build(),
                         UsernamePasswordAuthenticationFilter.class
                 )
-                /*.addFilterAfter(
+                .addFilterAfter(
                         new JwtAuthorizationFilter(jwtTokenProvider),
                         UsernamePasswordAuthenticationFilter.class
-                )*/;
+                );
 
         return http.build();
     }
