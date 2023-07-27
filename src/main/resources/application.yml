@@ -54,7 +54,8 @@ Cors:
     AllowedMethods: '*'
 
 
-
+springdoc:
+    show-login-endpoint: true
 
 
 
