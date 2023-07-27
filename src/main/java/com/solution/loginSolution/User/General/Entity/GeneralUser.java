@@ -17,10 +17,11 @@ import java.util.Map;
 @Setter
 @NoArgsConstructor
 @Entity
+@Table(name = "general_user", indexes = {@Index(name = "id_index", columnList = "id")})
 public class GeneralUser extends BaseTimeEntity implements OAuth2User {
 
     @Id
-    @Column(nullable = false)
+    @Column(nullable = false, name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
