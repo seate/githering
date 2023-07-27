@@ -24,9 +24,9 @@ public class UserController {
     private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping
-    public ResponseEntity<Void> register(@RequestBody @Valid UserRegisterRequestDTO userRegisterRequestDTO)
+    public ResponseEntity<Void> register(@RequestBody @Valid GeneralUserRegisterRequestDTO generalUserRegisterRequestDTO)
             throws UserExistException {
-        generalUserService.register(userRegisterRequestDTO);
+        generalUserService.register(generalUserRegisterRequestDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -54,12 +54,12 @@ public class UserController {
 
 
     @GetMapping("/inform")
-    public ResponseEntity<UserInformResponseDTO> findInform() {
+    public ResponseEntity<GeneralUserInformResponseDTO> findInform() {
         return new ResponseEntity<>(generalUserService.getInformation(), HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<Page<UserInformResponseDTO>> findAll(Pageable pageable) {
+    public ResponseEntity<Page<GeneralUserInformResponseDTO>> findAll(Pageable pageable) {
         return new ResponseEntity<>(generalUserService.findAll(pageable), HttpStatus.OK);
     }
 
@@ -81,8 +81,8 @@ public class UserController {
     }
 
     @PatchMapping("/changePassword")
-    public ResponseEntity<Void> changePassword(@RequestBody UserChangePasswordRequestDTO userChangePasswordRequestDTO) {
-        generalUserService.changePassword(userChangePasswordRequestDTO);
+    public ResponseEntity<Void> changePassword(@RequestBody GeneralUserChangePasswordRequestDTO generalUserChangePasswordRequestDTO) {
+        generalUserService.changePassword(generalUserChangePasswordRequestDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

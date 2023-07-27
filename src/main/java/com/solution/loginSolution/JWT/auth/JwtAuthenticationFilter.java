@@ -3,7 +3,7 @@ package com.solution.loginSolution.JWT.auth;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.solution.loginSolution.JWT.DTO.RefreshTokenRequestDTO;
 import com.solution.loginSolution.JWT.Service.RefreshTokenService;
-import com.solution.loginSolution.User.General.DTO.UserLoginRequestDTO;
+import com.solution.loginSolution.User.General.DTO.GeneralUserLoginRequestDTO;
 import com.solution.loginSolution.User.General.Entity.PrincipalDetails;
 import com.solution.loginSolution.User.General.Service.GeneralUserService;
 import jakarta.servlet.FilterChain;
@@ -47,19 +47,19 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         log.info("attempt Authentication");
-        UserLoginRequestDTO userLoginRequestDTO = null;
+        GeneralUserLoginRequestDTO generalUserLoginRequestDTO = null;
 
         try {
             // 이 부분을 위해서 MemberRequestDTO에 NoArgsConStructor가 필요함
-            userLoginRequestDTO = objectMapper.readValue(request.getInputStream(), UserLoginRequestDTO.class);
+            generalUserLoginRequestDTO = objectMapper.readValue(request.getInputStream(), GeneralUserLoginRequestDTO.class);
         }
         catch (Exception e) {
             e.printStackTrace();
         }
-        assert userLoginRequestDTO != null;
+        assert generalUserLoginRequestDTO != null;
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                userLoginRequestDTO.getUserEmail(), userLoginRequestDTO.getPassword());
+                generalUserLoginRequestDTO.getUserEmail(), generalUserLoginRequestDTO.getPassword());
 
         // 이곳에서 authenticate하기 위해 CustomUserDetailsService의 loadUserByUsername()이 실행됨
         // 따라서 loadUserByUsername()에서는 UserDetails를 구현한 클래스를 return해야함

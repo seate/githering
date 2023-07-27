@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class UserInformResponseDTO { //TODO userInform 정보 추가
+public class GeneralUserInformResponseDTO { //TODO userInform 정보 추가
     @NotBlank
     private String userEmail;
 
-    public UserInformResponseDTO(GeneralUser generalUser) {
+    public GeneralUserInformResponseDTO(GeneralUser generalUser) {
         this.userEmail = generalUser.getUserEmail();
     }
 }

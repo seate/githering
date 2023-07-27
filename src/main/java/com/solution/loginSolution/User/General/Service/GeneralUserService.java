@@ -1,8 +1,8 @@
 package com.solution.loginSolution.User.General.Service;
 
-import com.solution.loginSolution.User.General.DTO.UserChangePasswordRequestDTO;
-import com.solution.loginSolution.User.General.DTO.UserInformResponseDTO;
-import com.solution.loginSolution.User.General.DTO.UserRegisterRequestDTO;
+import com.solution.loginSolution.User.General.DTO.GeneralUserChangePasswordRequestDTO;
+import com.solution.loginSolution.User.General.DTO.GeneralUserInformResponseDTO;
+import com.solution.loginSolution.User.General.DTO.GeneralUserRegisterRequestDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface GeneralUserService extends UserDetailsService {
 
     //CREATE
-    void register(UserRegisterRequestDTO userRegisterRequestDTO);
+    void register(GeneralUserRegisterRequestDTO generalUserRegisterRequestDTO);
 
     @Override
     UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
@@ -29,10 +29,10 @@ public interface GeneralUserService extends UserDetailsService {
     boolean userEmailDupCheck(String userEmail);
 
 
-    UserInformResponseDTO getInformation();
-    Optional<UserInformResponseDTO> findById(Long id);
+    GeneralUserInformResponseDTO getInformation();
+    Optional<GeneralUserInformResponseDTO> findById(Long id);
 
-    Optional<UserInformResponseDTO> findByUserEmail(String userEmail);
+    Optional<GeneralUserInformResponseDTO> findByUserEmail(String userEmail);
 
     String findUserEmailById(Long id);
 
@@ -40,10 +40,10 @@ public interface GeneralUserService extends UserDetailsService {
 
     Long findIdByAuthentication();
 
-    Page<UserInformResponseDTO> findAll(Pageable pageable);
+    Page<GeneralUserInformResponseDTO> findAll(Pageable pageable);
     //MemberInfoResponseDTO findMember(MemberRequestDTO memberRequestDTO);
 
     // UPDATE
 
-    void changePassword(UserChangePasswordRequestDTO userChangePasswordRequestDTO);
+    void changePassword(GeneralUserChangePasswordRequestDTO generalUserChangePasswordRequestDTO);
 }

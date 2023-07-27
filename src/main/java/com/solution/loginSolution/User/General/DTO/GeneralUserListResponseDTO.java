@@ -4,12 +4,13 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
-public class UserWithdrawRequestDTO {
+public class GeneralUserListResponseDTO {
     @NotBlank
     private String userEmail;
 
-    @NotBlank
-    private String password;
+    private List<GeneralUserInformResponseDTO> userList;
 }
