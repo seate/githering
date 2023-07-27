@@ -3,7 +3,9 @@ package com.solution.loginSolution.User.General.Controller;
 import com.solution.loginSolution.JWT.Exception.AccessTokenNotExistException;
 import com.solution.loginSolution.JWT.auth.JwtTokenProvider;
 import com.solution.loginSolution.User.General.DTO.*;
+import com.solution.loginSolution.User.General.Entity.GeneralUser;
 import com.solution.loginSolution.User.General.Exception.UserExistException;
+import com.solution.loginSolution.User.General.Exception.UserNotExistException;
 import com.solution.loginSolution.User.General.Service.GeneralUserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -26,7 +28,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity<Void> register(@RequestBody @Valid GeneralUserRegisterRequestDTO generalUserRegisterRequestDTO)
             throws UserExistException {
-        generalUserService.register(generalUserRegisterRequestDTO);
+        generalUserService.register(generalUserRegisterRequestDTO.toEntity());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -55,12 +57,14 @@ public class UserController {
 
     @GetMapping("/inform")
     public ResponseEntity<GeneralUserInformResponseDTO> findInform() {
-        return new ResponseEntity<>(generalUserService.getInformation(), HttpStatus.OK);
+        Long userId = generalUserService.findIdByAuthentication();
+        GeneralUser generalUser = generalUserService.findById(userId).orElseThrow(UserNotExistException::new);
+        return new ResponseEntity<>(new GeneralUserInformResponseDTO(generalUser), HttpStatus.OK);
     }
 
     @GetMapping
     public ResponseEntity<Page<GeneralUserInformResponseDTO>> findAll(Pageable pageable) {
-        return new ResponseEntity<>(generalUserService.findAll(pageable), HttpStatus.OK);
+        return new ResponseEntity<>(generalUserService.findAll(pageable).map(GeneralUserInformResponseDTO::new), HttpStatus.OK);
     }
 
     @GetMapping("/findIdByUserEmail")
@@ -82,7 +86,8 @@ public class UserController {
 
     @PatchMapping("/changePassword")
     public ResponseEntity<Void> changePassword(@RequestBody GeneralUserChangePasswordRequestDTO generalUserChangePasswordRequestDTO) {
-        generalUserService.changePassword(generalUserChangePasswordRequestDTO);
+        Long userId = generalUserService.findIdByAuthentication();
+        generalUserService.changePassword(userId, generalUserChangePasswordRequestDTO.getNewPassword());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

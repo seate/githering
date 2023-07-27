@@ -24,12 +24,12 @@ public class GeneralUserRegisterRequestDTO {
     @NotBlank
     private String password;
 
-    public GeneralUser toEntity(String encodedPassword) {
+    public GeneralUser toEntity() {
         return GeneralUser.builder()
                 .userType(NORMAL)
                 .userName(userName)
                 .userEmail(userEmail)
-                .userPassword(encodedPassword)
+                .userPassword(password)
                 .role(Role.ROLE_MEMBER)
                 .build();
     }

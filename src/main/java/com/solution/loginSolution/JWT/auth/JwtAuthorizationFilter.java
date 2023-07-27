@@ -4,6 +4,9 @@ import com.solution.loginSolution.JWT.Exception.AccessTokenExpiredException;
 import com.solution.loginSolution.JWT.Exception.AccessTokenNotExistException;
 import com.solution.loginSolution.JWT.Exception.RefreshTokenExpiredException;
 import com.solution.loginSolution.JWT.Exception.TokenNotValidException;
+import com.solution.loginSolution.User.General.Entity.GeneralUser;
+import com.solution.loginSolution.User.General.Entity.PrincipalDetails;
+import com.solution.loginSolution.User.General.Service.GeneralUserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,11 +28,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
 
+    private final GeneralUserService generalUserService;
+
     private final RequestMatcher excludeRequestMatcher;
 
     @Builder
-    public JwtAuthorizationFilter(JwtTokenProvider jwtTokenProvider) {
+    public JwtAuthorizationFilter(JwtTokenProvider jwtTokenProvider, GeneralUserService generalUserService) {
         this.jwtTokenProvider = jwtTokenProvider;
+        this.generalUserService = generalUserService;
         this.excludeRequestMatcher = new OrRequestMatcher(
                 new AntPathRequestMatcher("/users", HttpMethod.POST.name()),
                 new AntPathRequestMatcher("/users/emailCheck", HttpMethod.GET.name()),
@@ -58,10 +64,18 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             // accessToken이 만료된 경우 AccessTokenExpiredException
             // accessToken이 만료되지 않은 경우 계속 진행
             jwtTokenProvider.validateAccessToken(accessToken);
+            Long userId = jwtTokenProvider.getUserIdByAccessToken(accessToken);
+            GeneralUser generalUser = generalUserService.findById(userId)
+                    .orElseThrow(TokenNotValidException::new);
 
             SecurityContextHolder.getContext().setAuthentication(
                     new UsernamePasswordAuthenticationToken(
-                        jwtTokenProvider.getUserEmailByAccessToken(accessToken), null
+                            generalUser,
+                            null,
+                            generalUserService.findById(userId)
+                                    .map(PrincipalDetails::new)
+                                    .orElseThrow(TokenNotValidException::new)
+                                    .getAuthorities()
                     )
             );
 

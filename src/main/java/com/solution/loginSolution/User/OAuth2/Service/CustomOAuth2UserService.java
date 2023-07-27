@@ -1,10 +1,10 @@
 package com.solution.loginSolution.User.OAuth2.Service;
 
 import com.solution.loginSolution.User.General.Entity.GeneralUser;
-import com.solution.loginSolution.User.General.Repository.GeneralUserRepository;
+import com.solution.loginSolution.User.General.Service.GeneralUserService;
 import com.solution.loginSolution.User.OAuth2.GeneralOAuth2User.GeneralOAuth2User;
-import com.solution.loginSolution.User.OAuth2.OAuth2UserAttributes.OAuth2UserAttributes;
 import com.solution.loginSolution.User.OAuth2.OAuth2UserAttributes.OAuth2AttributesParser;
+import com.solution.loginSolution.User.OAuth2.OAuth2UserAttributes.OAuth2UserAttributes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -22,8 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
-    private final GeneralUserRepository generalUserRepository;
-
+    private final GeneralUserService generalUserService;
     private final OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService = new DefaultOAuth2UserService();
 
     /*@Bean
@@ -46,14 +45,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         OAuth2UserAttributes userAttributes = OAuth2AttributesParser.parse(registrationId, oAuth2User.getAttributes());
 
-        GeneralUser generalUser = saveOrUpdate(userAttributes);
+        GeneralUser generalUser = generalUserService.saveOrUpdate(userAttributes.toGeneralUser());
 
         return new GeneralOAuth2User(generalUser);
-    }
-
-    private GeneralUser saveOrUpdate(OAuth2UserAttributes oAuth2UserAttributes) {
-        return generalUserRepository.findByUserEmail(oAuth2UserAttributes.getEmail())
-                .map(entity -> entity.update(oAuth2UserAttributes.getName()))
-                .orElseGet(() -> generalUserRepository.save(oAuth2UserAttributes.toGeneralUser()));
     }
 }

@@ -4,9 +4,6 @@ import com.solution.loginSolution.JWT.DTO.LogoutAccessTokenRequestDTO;
 import com.solution.loginSolution.JWT.Service.LogoutAccessTokenService;
 import com.solution.loginSolution.JWT.Service.RefreshTokenService;
 import com.solution.loginSolution.JWT.auth.JwtTokenProvider;
-import com.solution.loginSolution.User.General.DTO.GeneralUserChangePasswordRequestDTO;
-import com.solution.loginSolution.User.General.DTO.GeneralUserInformResponseDTO;
-import com.solution.loginSolution.User.General.DTO.GeneralUserRegisterRequestDTO;
 import com.solution.loginSolution.User.General.Entity.GeneralUser;
 import com.solution.loginSolution.User.General.Entity.PrincipalDetails;
 import com.solution.loginSolution.User.General.Exception.UserExistException;
@@ -51,19 +48,22 @@ public class GeneralUserServiceImpl implements GeneralUserService {
     // CREATE
     @Override
     @Transactional
-    public void register(GeneralUserRegisterRequestDTO generalUserRegisterRequestDTO) throws UserExistException {
-        if (generalUserRepository.existsByUserEmail(generalUserRegisterRequestDTO.getUserEmail())) {
+    public void register(GeneralUser generalUser) throws UserExistException {
+        if (generalUserRepository.existsByUserEmail(generalUser.getUserEmail())) {
             log.warn("UserExistException in register");
             throw new UserExistException();
         }
 
-        GeneralUser generalUser = generalUserRegisterRequestDTO
-                .toEntity(
-                        passwordEncoder
-                                .encode(generalUserRegisterRequestDTO.getPassword())
-                );
-
+        generalUser.setUserPassword(passwordEncoder.encode(generalUser.getUserPassword()));
         generalUserRepository.save(generalUser);
+    }
+
+    @Override
+    @Transactional
+    public GeneralUser saveOrUpdate(GeneralUser generalUser) {
+        return generalUserRepository.findByUserEmail(generalUser.getUserEmail())
+                .map(entity -> entity.update(generalUser.getUserName()))
+                .orElseGet(() -> generalUserRepository.save(generalUser));
     }
 
     // DELETE
@@ -102,20 +102,13 @@ public class GeneralUserServiceImpl implements GeneralUserService {
     }
 
     @Override
-    public GeneralUserInformResponseDTO getInformation() {
-        Long userId = findIdByAuthentication();
-        GeneralUser generalUser = generalUserRepository.findById(userId).orElseThrow(UserNotExistException::new);
-        return new GeneralUserInformResponseDTO(generalUser);
+    public Optional<GeneralUser> findById(Long id) {
+        return generalUserRepository.findById(id);
     }
 
     @Override
-    public Optional<GeneralUserInformResponseDTO> findById(Long id) {
-        return generalUserRepository.findById(id).map(GeneralUserInformResponseDTO::new);
-    }
-
-    @Override
-    public Optional<GeneralUserInformResponseDTO> findByUserEmail(String userEmail) {
-        return generalUserRepository.findByUserEmail(userEmail).map(GeneralUserInformResponseDTO::new);
+    public Optional<GeneralUser> findByUserEmail(String userEmail) {
+        return generalUserRepository.findByUserEmail(userEmail);
     }
 
     @Override
@@ -130,22 +123,21 @@ public class GeneralUserServiceImpl implements GeneralUserService {
 
     @Override
     public Long findIdByAuthentication() {
-        String userEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return findIdByUserEmail(userEmail);
+        GeneralUser generalUser = (GeneralUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return generalUser.getId();
     }
 
     @Override
-    public Page<GeneralUserInformResponseDTO> findAll(Pageable pageable) {
-        return generalUserRepository.findAll(pageable).map(GeneralUserInformResponseDTO::new);
+    public Page<GeneralUser> findAll(Pageable pageable) {
+        return generalUserRepository.findAll(pageable);
     }
 
     // UPDATE
     @Override
     @Transactional
-    public void changePassword(GeneralUserChangePasswordRequestDTO generalUserChangePasswordRequestDTO) {
-        Long userId = findIdByAuthentication();
+    public void changePassword(Long userId, String newPassword) {
         GeneralUser generalUser = generalUserRepository.findById(userId).orElseThrow(UserNotExistException::new);
-        generalUser.setUserPassword(passwordEncoder.encode(generalUserChangePasswordRequestDTO.getNewPassword()));
+        generalUser.setUserPassword(passwordEncoder.encode(newPassword));
         generalUserRepository.save(generalUser);
     }
 }

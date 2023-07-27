@@ -1,8 +1,6 @@
 package com.solution.loginSolution.User.General.Service;
 
-import com.solution.loginSolution.User.General.DTO.GeneralUserChangePasswordRequestDTO;
-import com.solution.loginSolution.User.General.DTO.GeneralUserInformResponseDTO;
-import com.solution.loginSolution.User.General.DTO.GeneralUserRegisterRequestDTO;
+import com.solution.loginSolution.User.General.Entity.GeneralUser;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,24 +13,26 @@ import java.util.Optional;
 public interface GeneralUserService extends UserDetailsService {
 
     //CREATE
-    void register(GeneralUserRegisterRequestDTO generalUserRegisterRequestDTO);
+    void register(GeneralUser generalUser);
+
+    GeneralUser saveOrUpdate(GeneralUser generalUser);
 
     @Override
     UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
 
     //MemberResponseDTO login(MemberRequestDTO memberRequestDTO);
 
-    void logout(String accessToken1);
+    void logout(String accessToken);
 
     void withdrawal(Long userId, String accessToken);
 
     boolean userEmailDupCheck(String userEmail);
 
 
-    GeneralUserInformResponseDTO getInformation();
-    Optional<GeneralUserInformResponseDTO> findById(Long id);
 
-    Optional<GeneralUserInformResponseDTO> findByUserEmail(String userEmail);
+    Optional<GeneralUser> findById(Long id);
+
+    Optional<GeneralUser> findByUserEmail(String userEmail);
 
     String findUserEmailById(Long id);
 
@@ -40,10 +40,10 @@ public interface GeneralUserService extends UserDetailsService {
 
     Long findIdByAuthentication();
 
-    Page<GeneralUserInformResponseDTO> findAll(Pageable pageable);
+    Page<GeneralUser> findAll(Pageable pageable);
     //MemberInfoResponseDTO findMember(MemberRequestDTO memberRequestDTO);
 
     // UPDATE
 
-    void changePassword(GeneralUserChangePasswordRequestDTO generalUserChangePasswordRequestDTO);
+    void changePassword(Long userId, String newPassword);
 }
