@@ -13,6 +13,11 @@ spring:
                             - profile
                             - email
 
+                    github:
+                        client-id: #github oauth2 서버의 id
+                        client-secret: #github oauth2 서버의 pw
+
+
                     kakao:
                         client-id: # kakao oauth2 서버의 id
                         client-secret:  #kakao oauth2의 secret-id
@@ -38,6 +43,8 @@ spring:
 
                 provider:
                     #google은 자동
+
+                    #github는 자동
 
                     kakao:
                         authorization-uri: https://kauth.kakao.com/oauth/authorize

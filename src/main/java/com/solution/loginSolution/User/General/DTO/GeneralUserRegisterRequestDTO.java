@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import static com.solution.loginSolution.User.General.enums.UserType.NORMAL;
+import static com.solution.loginSolution.User.enums.UserType.NORMAL;
 
 @Data
 @NoArgsConstructor

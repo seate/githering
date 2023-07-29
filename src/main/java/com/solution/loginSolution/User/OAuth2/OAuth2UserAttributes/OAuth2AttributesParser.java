@@ -15,6 +15,7 @@ public class OAuth2AttributesParser {
             case "google" -> new GoogleOAuth2UserAttributes(attributes);
             case "kakao" -> new KakaoOAuth2UserAttributes(attributes);
             case "naver" -> new NaverOAuth2UserAttributes(attributes);
+            case "github" -> new GithubOAuth2UserAttributes(attributes);
             default -> throw new AuthServerNotSupportedException();
         };
     }
