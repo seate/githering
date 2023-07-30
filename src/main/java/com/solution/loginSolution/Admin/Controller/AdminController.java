@@ -25,7 +25,5 @@ public class AdminController {
     public ResponseEntity<Page<AdminGeneralUserInformDTO>> getUsers(Pageable pageable) {
         return new ResponseEntity<>(adminService.getUsers(pageable).map(AdminGeneralUserInformDTO::new), HttpStatus.OK);
     }
-
-
 }
 

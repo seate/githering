@@ -4,13 +4,10 @@ import com.solution.loginSolution.JWT.Entity.LogoutAccessToken;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 @Repository
-public interface LogoutRedisRepository extends CrudRepository<LogoutAccessToken, Long> {
+public interface LogoutRedisRepository extends CrudRepository<LogoutAccessToken, String> {
     @Override
     <S extends LogoutAccessToken> S save(S entity);
 
-
-    Optional<LogoutAccessToken> findByAccessToken(String accessToken);
+    boolean existsById(String accessToken);
 }

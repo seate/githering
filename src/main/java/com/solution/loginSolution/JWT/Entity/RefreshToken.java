@@ -14,10 +14,10 @@ import org.springframework.data.redis.core.TimeToLive;
 @AllArgsConstructor
 @RedisHash(value = "RefreshToken", timeToLive = 1209600000) // TTL을 수정하면 yml도 수정해야함
 public class RefreshToken {
-    @Id // @Id annotation의 패키지에 주의
+    @Id // @Id annotation의 패키지에 주의, 탈퇴나 logout시 find하기 위해서 userEmail을 key로 설정
     private String userEmail;
 
-    private String refreshToken;
+    private String refreshTokenValue;
 
     @TimeToLive
     private Long expiration;

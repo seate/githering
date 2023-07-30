@@ -1,6 +1,7 @@
 package com.solution.loginSolution.Common.Config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.solution.loginSolution.JWT.Service.LogoutAccessTokenService;
 import com.solution.loginSolution.JWT.Service.RefreshTokenService;
 import com.solution.loginSolution.JWT.auth.JwtAuthenticationFilter;
 import com.solution.loginSolution.JWT.auth.JwtAuthorizationFilter;
@@ -48,6 +49,8 @@ public class SecurityConfig {
 
     private final oAuth2AuthenticationFailureHandler oAuth2FailureHandler;
 
+    private final LogoutAccessTokenService logoutAccessTokenService;
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
@@ -92,7 +95,7 @@ public class SecurityConfig {
                         UsernamePasswordAuthenticationFilter.class
                 )
                 .addFilterAfter(
-                        new JwtAuthorizationFilter(jwtTokenProvider, generalUserService),
+                        new JwtAuthorizationFilter(jwtTokenProvider, generalUserService, logoutAccessTokenService),
                         UsernamePasswordAuthenticationFilter.class
                 );
 

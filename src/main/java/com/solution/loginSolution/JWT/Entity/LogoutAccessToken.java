@@ -15,10 +15,10 @@ import org.springframework.data.redis.core.TimeToLive;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@RedisHash(value = "LogoutedAccessToken", timeToLive = 900000)
+@RedisHash(value = "LogoutAccessToken", timeToLive = 900000)
 public class LogoutAccessToken {
     @Id // @Id annotation의 패키지에 주의
-    private String accessToken;
+    private String accessTokenValue;
 
     @TimeToLive
     private Long expiration;

@@ -1,8 +1,8 @@
 package com.solution.loginSolution.JWT.Service;
 
-import com.solution.loginSolution.JWT.DTO.RefreshTokenRequestDTO;
 import com.solution.loginSolution.JWT.Entity.RefreshToken;
 import com.solution.loginSolution.JWT.Exception.RefreshTokenNotExistException;
+import com.solution.loginSolution.JWT.Exception.TokenNotValidException;
 import com.solution.loginSolution.JWT.Repository.RefreshTokenRedisRepository;
 import com.solution.loginSolution.JWT.auth.JwtToken;
 import com.solution.loginSolution.JWT.auth.JwtTokenProvider;
@@ -19,46 +19,47 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Override
     @Transactional
-    public void saveOrUpdate(RefreshTokenRequestDTO refreshTokenRequestDTO) {
-        String refreshToken = refreshTokenRequestDTO.getRefreshToken();
-
-        refreshTokenRedisRepository.save(RefreshToken.builder()
-                .userEmail(jwtTokenProvider.getUserEmailByRefreshToken(refreshToken))
-                .refreshToken(refreshToken)
-                .expiration(jwtTokenProvider.getRemainingTimeByRefreshToken(refreshToken)).build());
+    public void saveOrUpdate(RefreshToken refreshToken) {
+        refreshTokenRedisRepository.save(refreshToken);
     }
 
     @Override
     @Transactional
     public void deleteByUserEmail(String userEmail) {
-        refreshTokenRedisRepository.delete(RefreshToken.builder().userEmail(userEmail).build());
+        refreshTokenRedisRepository.deleteById(userEmail);
     }
 
     @Override
     public String findByUserEmail(String userEmail) {
-        return refreshTokenRedisRepository.findByUserEmail(userEmail)
-                .orElseThrow(RefreshTokenNotExistException::new).getRefreshToken();
+        return refreshTokenRedisRepository.findById(userEmail)
+                .orElseThrow(RefreshTokenNotExistException::new).getRefreshTokenValue();
     }
 
     @Override
     @Transactional
-    public JwtToken reIssueTokens(RefreshTokenRequestDTO refreshTokenRequestDTO) throws RefreshTokenNotExistException {
-        String refreshToken = refreshTokenRequestDTO.getRefreshToken();
+    public JwtToken reIssueTokens(RefreshToken refreshToken) throws RefreshTokenNotExistException {
+        String refreshTokenValue = refreshToken.getRefreshTokenValue();
+        String userEmail = jwtTokenProvider.getUserEmailByRefreshToken(refreshTokenValue);
 
-        jwtTokenProvider.validateRefreshToken(refreshToken);
+        jwtTokenProvider.validateRefreshToken(refreshTokenValue);
+        if (!isValid(userEmail)) throw new TokenNotValidException();
 
-        Long userId = jwtTokenProvider.getUserIdByRefreshToken(refreshToken);
-        String userEmail = jwtTokenProvider.getUserEmailByRefreshToken(refreshToken);
+        Long userId = jwtTokenProvider.getUserIdByRefreshToken(refreshTokenValue);
         String newRefreshToken = jwtTokenProvider.createRefreshToken(userId, userEmail);
 
-        refreshTokenRedisRepository.save(
+        saveOrUpdate(
                 RefreshToken.builder()
                         .userEmail(userEmail)
-                        .refreshToken(newRefreshToken)
+                        .refreshTokenValue(newRefreshToken)
                         .expiration(jwtTokenProvider.getRemainingTimeByRefreshToken(newRefreshToken))
                         .build()
         );
 
         return new JwtToken(jwtTokenProvider.createAccessToken(userId, userEmail), newRefreshToken);
+    }
+
+    @Override
+    public boolean isValid(String userEmail) {
+        return refreshTokenRedisRepository.existsById(userEmail);
     }
 }

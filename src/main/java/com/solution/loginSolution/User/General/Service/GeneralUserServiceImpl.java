@@ -91,8 +91,7 @@ public class GeneralUserServiceImpl implements GeneralUserService {
     @Override
     @Transactional
     public void logout(String accessToken) {
-        Long remainingTime = jwtTokenProvider.getRemainingTimeByAccessToken(accessToken);
-        logoutAccessTokenService.saveLogoutAccessToken(new LogoutAccessTokenRequestDTO(accessToken, remainingTime));
+        logoutAccessTokenService.saveLogoutAccessToken(new LogoutAccessTokenRequestDTO(accessToken).toEntity(jwtTokenProvider));
         refreshTokenService.deleteByUserEmail(jwtTokenProvider.getUserEmailByAccessToken(accessToken));
     }
 

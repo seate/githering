@@ -54,7 +54,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             generalUserLoginRequestDTO = objectMapper.readValue(request.getInputStream(), GeneralUserLoginRequestDTO.class);
         }
         catch (Exception e) {
-            e.printStackTrace();
+            log.error("jwtAuthenticationFilter error");
         }
         assert generalUserLoginRequestDTO != null;
 
@@ -78,7 +78,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String accessToken = jwtTokenProvider.createAccessToken(userId, userEmail);
         String refreshToken = jwtTokenProvider.createRefreshToken(userId, userEmail);
 
-        refreshTokenService.saveOrUpdate(new RefreshTokenRequestDTO(refreshToken)); // 새로 발급한 refreshToken 저장
+        refreshTokenService.saveOrUpdate(new RefreshTokenRequestDTO(refreshToken).toEntity(jwtTokenProvider)); // 새로 발급한 refreshToken 저장
 
 
         // body에 tokens 작성

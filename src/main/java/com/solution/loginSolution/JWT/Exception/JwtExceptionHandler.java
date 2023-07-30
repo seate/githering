@@ -22,10 +22,4 @@ public class JwtExceptionHandler {
     public ResponseEntity<String> RefreshTokenNotExist(RefreshTokenNotExistException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
     }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> unhandledException(Exception e) {
-        e.printStackTrace();
-        return new ResponseEntity<>("예상치 못한 에러가 발생했습니다.", HttpStatus.FORBIDDEN);
-    }
 }

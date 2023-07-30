@@ -2,13 +2,11 @@ package com.solution.loginSolution.JWT.auth;
 
 import com.solution.loginSolution.JWT.Exception.AccessTokenExpiredException;
 import com.solution.loginSolution.JWT.Exception.RefreshTokenExpiredException;
-import com.solution.loginSolution.JWT.Exception.RefreshTokenNotExistException;
 import com.solution.loginSolution.JWT.Exception.TokenNotValidException;
-import com.solution.loginSolution.JWT.Repository.RefreshTokenRedisRepository;
-import com.solution.loginSolution.JWT.Service.LogoutAccessTokenService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -43,12 +41,6 @@ public class JwtTokenProvider {
 
     @Value("${jwt.refreshToken.expirationMs}")
     private long refreshTokenValidTime;
-
-    private final LogoutAccessTokenService logoutAccessTokenService;
-
-    private final RefreshTokenRedisRepository refreshTokenRedisRepository;
-
-
 
     @PostConstruct
     protected void init() {
@@ -162,25 +154,23 @@ public class JwtTokenProvider {
 
 
 
-    public void validateAccessToken(String accessToken) throws AccessTokenExpiredException {
-        try{
+    public void validateAccessToken(String accessToken) throws AccessTokenExpiredException, TokenNotValidException {
+        try {
             Jwts.parser().setSigningKey(accessTokenSecretKey).parseClaimsJws(accessToken); // parsing 시에 검증 됨
-            // refreshToken과 반대로 accessToken이 존재하면 거부, 존재하지 않으면 허가
-            logoutAccessTokenService.findByAccessToken(accessToken)
-                    .ifPresent(logoutAccessToken -> {throw new TokenNotValidException();});
         } catch (ExpiredJwtException e) {
             throw new AccessTokenExpiredException();
+        } catch (SignatureException e) {
+            throw new TokenNotValidException();
         }
     }
 
-    public void validateRefreshToken(String refreshToken) throws RefreshTokenExpiredException {
-        try{
+    public void validateRefreshToken(String refreshToken) throws RefreshTokenExpiredException, TokenNotValidException {
+        try {
             Jwts.parser().setSigningKey(refreshTokenSecretKey).parseClaimsJws(refreshToken); // parsing 시에 검증 됨
-            // accessToken과 반대로 refreshToken이 존재하면 허가, 존재하지 않으면 거부
-            if (refreshTokenRedisRepository.findByUserEmail(getUserEmailByRefreshToken(refreshToken)).isEmpty())
-                throw new RefreshTokenNotExistException();
         } catch (ExpiredJwtException e) {
             throw new RefreshTokenExpiredException();
+        } catch (SignatureException e) {
+            throw new TokenNotValidException();
         }
     }
 

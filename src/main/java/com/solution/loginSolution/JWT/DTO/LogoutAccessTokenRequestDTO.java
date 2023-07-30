@@ -1,24 +1,20 @@
 package com.solution.loginSolution.JWT.DTO;
 
 import com.solution.loginSolution.JWT.Entity.LogoutAccessToken;
+import com.solution.loginSolution.JWT.auth.JwtTokenProvider;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class LogoutAccessTokenRequestDTO {
 
     private String accessToken;
 
-    private Long remainingTime;
-
-    public LogoutAccessTokenRequestDTO(String accessToken, Long remainingTime) {
-        this.accessToken = accessToken;
-        this.remainingTime = remainingTime;
-    }
-
-    public LogoutAccessToken toEntity() {
+    public LogoutAccessToken toEntity(JwtTokenProvider jwtTokenProvider) {
         return LogoutAccessToken.builder()
-                .accessToken(accessToken)
-                .expiration(remainingTime)
+                .accessTokenValue(accessToken)
+                .expiration(jwtTokenProvider.getRemainingTimeByAccessToken(accessToken))
                 .build();
     }
 }
