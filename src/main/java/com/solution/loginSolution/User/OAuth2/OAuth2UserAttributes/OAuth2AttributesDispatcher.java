@@ -7,9 +7,9 @@ import java.util.Map;
 
 
 @Getter
-public class OAuth2AttributesParser {
+public class OAuth2AttributesDispatcher {
 
-    public static OAuth2UserAttributes parse(String registrationId, Map<String, Object> attributes)
+    public static OAuth2UserAttributes dispatch(String registrationId, Map<String, Object> attributes)
             throws AuthServerNotSupportedException {
         return switch (registrationId) {
             case "google" -> new GoogleOAuth2UserAttributes(attributes);

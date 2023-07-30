@@ -3,7 +3,7 @@ package com.solution.loginSolution.User.OAuth2.Service;
 import com.solution.loginSolution.User.General.Entity.GeneralUser;
 import com.solution.loginSolution.User.General.Service.GeneralUserService;
 import com.solution.loginSolution.User.OAuth2.GeneralOAuth2User.GeneralOAuth2User;
-import com.solution.loginSolution.User.OAuth2.OAuth2UserAttributes.OAuth2AttributesParser;
+import com.solution.loginSolution.User.OAuth2.OAuth2UserAttributes.OAuth2AttributesDispatcher;
 import com.solution.loginSolution.User.OAuth2.OAuth2UserAttributes.OAuth2UserAttributes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +43,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         // OAuth2 서비스 id 구분코드 (구글, 네이버, 카카오 등)
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
-        OAuth2UserAttributes userAttributes = OAuth2AttributesParser.parse(registrationId, oAuth2User.getAttributes());
+        OAuth2UserAttributes userAttributes = OAuth2AttributesDispatcher.dispatch(registrationId, oAuth2User.getAttributes());
 
         GeneralUser generalUser = generalUserService.saveOrUpdate(userAttributes.toGeneralUser());
 
