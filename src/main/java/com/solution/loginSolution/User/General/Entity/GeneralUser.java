@@ -1,7 +1,7 @@
 package com.solution.loginSolution.User.General.Entity;
 
 import com.solution.loginSolution.Common.Entity.BaseTimeEntity;
-import com.solution.loginSolution.User.enums.UserType;
+import com.solution.loginSolution.User.Enums.UserType;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

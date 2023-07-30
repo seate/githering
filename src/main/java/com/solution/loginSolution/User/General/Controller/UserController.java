@@ -2,7 +2,9 @@ package com.solution.loginSolution.User.General.Controller;
 
 import com.solution.loginSolution.JWT.Exception.AccessTokenNotExistException;
 import com.solution.loginSolution.JWT.auth.JwtTokenProvider;
-import com.solution.loginSolution.User.General.DTO.*;
+import com.solution.loginSolution.User.General.DTO.GeneralUserChangePasswordRequestDTO;
+import com.solution.loginSolution.User.General.DTO.GeneralUserInformResponseDTO;
+import com.solution.loginSolution.User.General.DTO.GeneralUserRegisterRequestDTO;
 import com.solution.loginSolution.User.General.Entity.GeneralUser;
 import com.solution.loginSolution.User.General.Exception.UserExistException;
 import com.solution.loginSolution.User.General.Exception.UserNotExistException;
