@@ -6,5 +6,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface AdminService {
 
-    public Page<GeneralUser> getUsers(Pageable pageable);
+    Page<GeneralUser> getUsers(Pageable pageable);
 }

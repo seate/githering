@@ -5,6 +5,7 @@ import com.solution.loginSolution.JWT.Exception.RefreshTokenExpiredException;
 import com.solution.loginSolution.JWT.Service.RefreshTokenService;
 import com.solution.loginSolution.JWT.auth.JwtToken;
 import com.solution.loginSolution.JWT.auth.JwtTokenProvider;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class RefreshTokenController {
     private final JwtTokenProvider jwtTokenProvider;
 
     @RequestMapping(method = RequestMethod.POST, value = "/reIssue")
-    public ResponseEntity<JwtToken> reIssueAccessToken(@RequestBody RefreshTokenRequestDTO refreshTokenRequestDTO) throws RefreshTokenExpiredException {
+    public ResponseEntity<JwtToken> reIssueAccessToken(@RequestBody @Valid RefreshTokenRequestDTO refreshTokenRequestDTO) throws RefreshTokenExpiredException {
         JwtToken jwtToken = refreshTokenService.reIssueTokens(refreshTokenRequestDTO.toEntity(jwtTokenProvider));
         return new ResponseEntity<>(jwtToken, HttpStatus.OK);
     }

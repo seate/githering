@@ -87,7 +87,7 @@ public class UserController {
     }
 
     @PatchMapping("/changePassword")
-    public ResponseEntity<Void> changePassword(@RequestBody GeneralUserChangePasswordRequestDTO generalUserChangePasswordRequestDTO) {
+    public ResponseEntity<Void> changePassword(@RequestBody @Valid GeneralUserChangePasswordRequestDTO generalUserChangePasswordRequestDTO) {
         Long userId = generalUserService.findIdByAuthentication();
         generalUserService.changePassword(userId, generalUserChangePasswordRequestDTO.getNewPassword());
         return new ResponseEntity<>(HttpStatus.OK);

@@ -39,7 +39,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         return processOAuth2User(userRequest, oAuth2User);
     }
 
-    protected OAuth2User processOAuth2User(OAuth2UserRequest userRequest, OAuth2User oAuth2User) {
+    private OAuth2User processOAuth2User(OAuth2UserRequest userRequest, OAuth2User oAuth2User) {
         // OAuth2 서비스 id 구분코드 (구글, 네이버, 카카오 등)
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
