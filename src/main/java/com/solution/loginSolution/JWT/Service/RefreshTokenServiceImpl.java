@@ -30,14 +30,14 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
-    public String findByUserEmail(String userEmail) {
+    public String findByUserEmail(String userEmail) throws RefreshTokenNotExistException {
         return refreshTokenRedisRepository.findById(userEmail)
                 .orElseThrow(RefreshTokenNotExistException::new).getRefreshTokenValue();
     }
 
     @Override
     @Transactional
-    public JwtToken reIssueTokens(RefreshToken refreshToken) throws RefreshTokenNotExistException {
+    public JwtToken reIssueTokens(RefreshToken refreshToken) throws RefreshTokenNotExistException, TokenNotValidException {
         String refreshTokenValue = refreshToken.getRefreshTokenValue();
         String userEmail = jwtTokenProvider.getUserEmailByRefreshToken(refreshTokenValue);
 

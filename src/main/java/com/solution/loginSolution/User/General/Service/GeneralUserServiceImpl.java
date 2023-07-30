@@ -69,7 +69,7 @@ public class GeneralUserServiceImpl implements GeneralUserService {
     // DELETE
     @Override
     @Transactional
-    public void withdrawal(Long userId, String accessToken) {
+    public void withdrawal(Long userId, String accessToken) throws UserNotExistException {
         logout(accessToken);
         GeneralUser generalUser = generalUserRepository.findById(userId).orElseThrow(UserNotExistException::new);
         generalUserRepository.delete(generalUser);
@@ -111,12 +111,12 @@ public class GeneralUserServiceImpl implements GeneralUserService {
     }
 
     @Override
-    public String findUserEmailById(Long id) {
+    public String findUserEmailById(Long id) throws UserNotExistException {
         return generalUserRepository.findById(id).orElseThrow(UserNotExistException::new).getUserEmail();
     }
 
     @Override
-    public Long findIdByUserEmail(String userEmail) {
+    public Long findIdByUserEmail(String userEmail) throws UserNotExistException {
         return generalUserRepository.findByUserEmail(userEmail).orElseThrow(UserNotExistException::new).getId();
     }
 
@@ -134,7 +134,7 @@ public class GeneralUserServiceImpl implements GeneralUserService {
     // UPDATE
     @Override
     @Transactional
-    public void changePassword(Long userId, String newPassword) {
+    public void changePassword(Long userId, String newPassword) throws UserNotExistException {
         GeneralUser generalUser = generalUserRepository.findById(userId).orElseThrow(UserNotExistException::new);
         generalUser.setUserPassword(passwordEncoder.encode(newPassword));
         generalUserRepository.save(generalUser);
