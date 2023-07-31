@@ -1,7 +1,10 @@
 package com.solution.loginSolution.User.General.Exception;
 
-public class loginFailureException extends RuntimeException {
+import com.solution.loginSolution.Common.Exception.RuntimeExceptionWithHttpStatus;
+import org.springframework.http.HttpStatus;
+
+public class loginFailureException extends RuntimeExceptionWithHttpStatus {
     public loginFailureException() {
-        super("로그인에 실패하였습니다.");
+        super("로그인에 실패하였습니다.", HttpStatus.UNAUTHORIZED);
     }
 }
