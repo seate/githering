@@ -11,6 +11,7 @@ public class OAuth2AttributesDispatcher {
 
     public static OAuth2UserAttributes dispatch(String registrationId, Map<String, Object> attributes)
             throws AuthServerNotSupportedException {
+
         return switch (registrationId) {
             case "google" -> new GoogleOAuth2UserAttributes(attributes);
             case "kakao" -> new KakaoOAuth2UserAttributes(attributes);

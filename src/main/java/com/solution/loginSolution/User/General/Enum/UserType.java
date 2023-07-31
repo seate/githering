@@ -1,4 +1,4 @@
-package com.solution.loginSolution.User.Enums;
+package com.solution.loginSolution.User.General.Enum;
 
 import lombok.AllArgsConstructor;
 

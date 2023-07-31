@@ -2,13 +2,13 @@ package com.solution.loginSolution.User.General.DTO;
 
 import com.solution.loginSolution.User.General.Entity.Role;
 import com.solution.loginSolution.User.General.Entity.GeneralUser;
+import com.solution.loginSolution.User.General.Enum.UserType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import static com.solution.loginSolution.User.Enums.UserType.NORMAL;
 
 @Data
 @NoArgsConstructor
@@ -26,7 +26,7 @@ public class GeneralUserRegisterRequestDTO {
 
     public GeneralUser toEntity() {
         return GeneralUser.builder()
-                .userType(NORMAL)
+                .userType(UserType.NORMAL)
                 .userName(userName)
                 .userEmail(userEmail)
                 .userPassword(password)
