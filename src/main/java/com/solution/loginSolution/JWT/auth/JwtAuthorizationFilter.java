@@ -89,17 +89,17 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             chain.doFilter(request, response); //filter 계속 진행
 
         } catch (AccessTokenExpiredException e){
-            log.debug("AccessTokenExpired: ", e);
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
+            log.debug("AccessToken Expired: ", e);
+            response.sendError(e.getHttpStatus().value(), e.getMessage());
         } catch (AccessTokenNotExistException e) {
-            log.warn("Token Not Exist: ", e);
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
+            log.debug("Token Not Exist: ", e);
+            response.sendError(e.getHttpStatus().value(), e.getMessage());
         } catch (TokenNotValidException e) { //
-            log.warn("TokenNotValid: ", e);
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
+            log.warn("Token Not Valid: ", e);
+            response.sendError(e.getHttpStatus().value(), e.getMessage());
         } catch (Exception e) {
             log.error("unhandled error: ", e);
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "처리되지 않은 에러입니다.");
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "처리되지 않은 에러입니다.");
         }
     }
 
