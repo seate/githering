@@ -1,12 +1,11 @@
 package com.project.githering.User.General.Exception;
 
 import com.project.githering.JWT.Exception.AccessTokenNotExistException;
-import com.project.githering.User.General.Controller.UserController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice(basePackageClasses = UserController.class)
+@RestControllerAdvice
 public class UserExceptionHandler {
 
 

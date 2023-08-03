@@ -1,11 +1,10 @@
 package com.project.githering.JWT.Exception;
 
-import com.project.githering.JWT.Controller.RefreshTokenController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice(basePackageClasses = RefreshTokenController.class)
+@RestControllerAdvice
 public class JwtExceptionHandler {
     @ExceptionHandler(TokenNotValidException.class)
     public ResponseEntity<String> TokenNotValid(TokenNotValidException e) {
