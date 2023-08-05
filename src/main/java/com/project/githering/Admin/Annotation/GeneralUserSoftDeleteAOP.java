@@ -39,7 +39,9 @@ public class GeneralUserSoftDeleteAOP {
         }
     }
 
-    @Around("execution(* com.project.githering.Admin.Service.*.*(..))")
+    @Around("execution(* com.project.githering.Admin.Service.*.*(..))" +
+            // 재생성 시 soft deleted된 것도 찾아야 함
+            "|| execution(* com.project.githering.User.General.Service.GeneralUserServiceImpl.loadUser(..))")
     public Object include(ProceedingJoinPoint joinPoint) throws Throwable {
         Session session = entityManager.unwrap(Session.class);
         session.disableFilter(filterName);

@@ -71,7 +71,7 @@ public class GeneralUserServiceImpl implements GeneralUserService {
 
         // saveOrUpdate
         GeneralUser findGeneralUser = generalUserRepository.findByLoginUser(generalUser.getLoginUser())
-                .map(entity -> entity.update(generalUser.getUserName()))
+                .map(entity -> entity.update(generalUser.getUserName(), true/*soft delete의 재생성을 위해*/))
                 .orElseGet(() -> generalUserRepository.save(generalUser));
 
         // stateful일 경우 securityContextHolder에 저장되지만 stateless일 경우 저장되지 않음

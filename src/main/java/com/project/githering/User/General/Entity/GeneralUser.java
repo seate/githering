@@ -49,8 +49,9 @@ public class GeneralUser extends BaseTimeEntity {
         this.role = role;
     }
 
-    public GeneralUser update(String userName) {
+    public GeneralUser update(String userName, boolean deleted) {
         this.userName = userName;
+        this.deleted = deleted; // soft delete의 재생성을 위해
         return this;
     }
 }
