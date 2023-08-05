@@ -5,11 +5,12 @@ import com.project.githering.JWT.Service.LogoutAccessTokenService;
 import com.project.githering.JWT.Service.RefreshTokenService;
 import com.project.githering.JWT.auth.JwtTokenProvider;
 import com.project.githering.User.General.Entity.GeneralUser;
-import com.project.githering.User.General.Repository.GeneralUserRepository;
 import com.project.githering.User.General.Exception.UserNotExistException;
+import com.project.githering.User.General.Repository.GeneralUserRepository;
 import com.project.githering.User.OAuth2.GeneralOAuth2User.GeneralOAuth2User;
-import com.project.githering.User.OAuth2.OAuth2UserAttributes.OAuth2AttributesDispatcher;
 import com.project.githering.User.OAuth2.OAuth2UserAttributes.GithubOAuth2UserAttributes;
+import com.project.githering.User.OAuth2.OAuth2UserAttributes.OAuth2AttributesDispatcher;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -36,6 +37,9 @@ public class GeneralUserServiceImpl implements GeneralUserService {
     private final GeneralUserRepository generalUserRepository;
 
     private final OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService = new DefaultOAuth2UserService();
+
+    private final EntityManager entityManager;
+
 
     private PasswordEncoder passwordEncoder;
 
