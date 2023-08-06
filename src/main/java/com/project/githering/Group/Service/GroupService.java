@@ -29,5 +29,5 @@ public interface GroupService {
     Page<Group> findAllGroup(Pageable pageable);
 
     //UPDATE
-    //void updateGroup(Group group);
+    void updateMaster(Long groupId, Long masterId, Long newMasterId);
 }

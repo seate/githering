@@ -107,8 +107,9 @@ public class GroupServiceImpl implements GroupService {
         return groupRepository.findAll(pageable);
     }
 
+    @Override
     @Transactional
-    public void updateMaster(Long masterId, Long newMasterId, Long groupId) {
+    public void updateMaster(Long groupId, Long masterId, Long newMasterId) {
         Group findGroup = groupRepository.findById(groupId).orElseThrow(GroupNotExistException::new);
         if (!findGroup.getGroupMasterId().equals(masterId)) throw new NoAuthorityException();
 

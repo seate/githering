@@ -73,6 +73,15 @@ public class GroupController {
     }
 
 
-    //TODO update Group Master
+    @PatchMapping("/master")
+    public ResponseEntity<Void> updateMaster(@RequestBody @Valid UpdateGroupMasterRequestDTO updateGroupMasterRequestDTO) {
+        Long userId = generalUserService.findIdByAuthentication();
+        groupService.updateMaster(
+                updateGroupMasterRequestDTO.getGroupId(),
+                userId,
+                updateGroupMasterRequestDTO.getNewGroupMasterId()
+        );
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
 
