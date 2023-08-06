@@ -23,7 +23,7 @@ public interface GroupService {
     void withdrawalGroup(Long userId, Long groupId);
 
     //READ
-    boolean isGroupMaster(Long userId, Long groupId);
+    boolean hasAuthority(Long userId, Long groupId);
 
     Optional<Group> findGroupById(Long groupId);
 
