@@ -9,6 +9,8 @@ import com.project.githering.Group.Exception.GroupExistException;
 import com.project.githering.Group.Exception.GroupNotExistException;
 import com.project.githering.Group.Exception.NoAuthorityException;
 import com.project.githering.Group.Repository.GroupRepository;
+import com.project.githering.User.General.Entity.GeneralUser;
+import com.project.githering.User.General.Service.GeneralUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -26,6 +28,8 @@ public class GroupServiceImpl implements GroupService {
     private final GroupRepository groupRepository;
 
     private final GroupBelongService groupBelongService;
+
+    private final GeneralUserService generalUserService;
 
     @Override
     @Transactional
@@ -63,7 +67,7 @@ public class GroupServiceImpl implements GroupService {
     @Transactional
     public void deleteGroupById(Long userId, Long groupId) throws GroupNotExistException, NoAuthorityException {
         if (!existById(groupId)) throw new GroupNotExistException();
-        if (!isGroupMaster(userId, groupId)) throw new NoAuthorityException();
+        if (!hasAuthority(userId, groupId)) throw new NoAuthorityException();
 
         groupRepository.deleteById(groupId);
     }
@@ -83,8 +87,15 @@ public class GroupServiceImpl implements GroupService {
 
 
     @Override
-    public boolean isGroupMaster(Long userId, Long groupId) throws GroupNotExistException {
-        return findGroupById(groupId).orElseThrow(GroupNotExistException::new).getGroupMasterId().equals(userId);
+    public boolean hasAuthority(Long userId, Long groupId) throws GroupNotExistException {
+        return (findGroupById(groupId)
+                .orElseThrow(GroupNotExistException::new)
+                .getGroupMasterId().equals(userId)
+                || generalUserService
+                .findAllAdmin()
+                .stream().map(GeneralUser::getId)
+                .anyMatch(id -> id.equals(userId))
+        );
     }
 
     public boolean existById(Long groupId) {
@@ -117,7 +128,7 @@ public class GroupServiceImpl implements GroupService {
     @Transactional
     public void updateMaster(Long userId, UpdateGroupMasterRequestDTO updateGroupMasterRequestDTO) throws GroupNotExistException, NoAuthorityException {
         Long groupId = updateGroupMasterRequestDTO.getGroupId();
-        if (!isGroupMaster(userId, groupId)) throw new NoAuthorityException();
+        if (!hasAuthority(userId, groupId)) throw new NoAuthorityException();
 
         Long newGroupMasterId = updateGroupMasterRequestDTO.getNewGroupMasterId();
 
@@ -129,7 +140,7 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public void updateInform(Long userId, UpdateGroupInformRequestDTO updateGroupInformRequestDTO) throws GroupNotExistException, NoAuthorityException {
         Long groupId = updateGroupInformRequestDTO.getGroupId();
-        if (!isGroupMaster(userId, groupId)) throw new NoAuthorityException();
+        if (!hasAuthority(userId, groupId)) throw new NoAuthorityException();
 
         Group findGroup = groupRepository.findById(groupId).orElseThrow(GroupNotExistException::new);
         findGroup.setGroupType(updateGroupInformRequestDTO.getGroupType());
