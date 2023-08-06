@@ -82,7 +82,8 @@ public class GroupServiceImpl implements GroupService {
 
 
 
-    private boolean isGroupMaster(Long userId, Long groupId) throws GroupNotExistException {
+    @Override
+    public boolean isGroupMaster(Long userId, Long groupId) throws GroupNotExistException {
         return findGroupById(groupId).orElseThrow(GroupNotExistException::new).getGroupMasterId().equals(userId);
     }
 
