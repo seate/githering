@@ -29,7 +29,6 @@ public class GroupController {
     @PostMapping
     public ResponseEntity<Void> createGroup(@RequestBody @Valid CreateGroupRequestDTO createGroupRequestDTO) {
         Long userId = generalUserService.findIdByAuthentication();
-        System.out.println("createee: " + createGroupRequestDTO.getGroupType());
         groupService.createGroup(createGroupRequestDTO.toEntity(userId));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

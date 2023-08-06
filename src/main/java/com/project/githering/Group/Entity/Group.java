@@ -24,6 +24,7 @@ public class Group extends BaseTimeEntity {
     private Long groupMasterId;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private GroupType groupType;
 
     @Column(nullable = false, unique = true)
