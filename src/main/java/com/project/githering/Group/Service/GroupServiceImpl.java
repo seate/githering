@@ -1,8 +1,10 @@
 package com.project.githering.Group.Service;
 
 import com.project.githering.Group.Belong.Service.GroupBelongService;
+import com.project.githering.Group.DTO.CreateGroupRequestDTO;
+import com.project.githering.Group.DTO.UpdateGroupInformRequestDTO;
+import com.project.githering.Group.DTO.UpdateGroupMasterRequestDTO;
 import com.project.githering.Group.Entity.Group;
-import com.project.githering.Group.Enum.GroupType;
 import com.project.githering.Group.Exception.GroupExistException;
 import com.project.githering.Group.Exception.GroupNotExistException;
 import com.project.githering.Group.Exception.NoAuthorityException;
@@ -27,7 +29,9 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public void createGroup(Group group) throws GroupExistException, GroupNotExistException {
+    public void createGroup(Long userId, CreateGroupRequestDTO createGroupRequestDTO) throws GroupExistException, GroupNotExistException {
+        Group group = createGroupRequestDTO.toEntity(userId);
+
         findGroupByName(group.getGroupName()).ifPresentOrElse(
                 g -> {throw new GroupExistException();},
                 () -> {
@@ -110,20 +114,25 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public void updateMaster(Long groupId, Long masterId, Long newMasterId) throws GroupNotExistException, NoAuthorityException {
-        Group findGroup = groupRepository.findById(groupId).orElseThrow(GroupNotExistException::new);
-        if (!isGroupMaster(findGroup.getGroupId(), masterId)) throw new NoAuthorityException();
+    public void updateMaster(Long userId, UpdateGroupMasterRequestDTO updateGroupMasterRequestDTO) throws GroupNotExistException, NoAuthorityException {
+        Long groupId = updateGroupMasterRequestDTO.getGroupId();
+        if (!isGroupMaster(userId, groupId)) throw new NoAuthorityException();
 
-        findGroup.setGroupMasterId(newMasterId);
+        Long newGroupMasterId = updateGroupMasterRequestDTO.getNewGroupMasterId();
+
+        Group findGroup = groupRepository.findById(groupId).orElseThrow(GroupNotExistException::new);
+
+        findGroup.setGroupMasterId(newGroupMasterId);
     }
 
     @Override
-    public void updateInform(Long userId, Long groupId, GroupType groupType, String groupName, String groupDescription) throws GroupNotExistException, NoAuthorityException {
+    public void updateInform(Long userId, UpdateGroupInformRequestDTO updateGroupInformRequestDTO) throws GroupNotExistException, NoAuthorityException {
+        Long groupId = updateGroupInformRequestDTO.getGroupId();
         if (!isGroupMaster(userId, groupId)) throw new NoAuthorityException();
 
         Group findGroup = groupRepository.findById(groupId).orElseThrow(GroupNotExistException::new);
-        findGroup.setGroupType(groupType);
-        findGroup.setGroupName(groupName);
-        findGroup.setGroupDescription(groupDescription);
+        findGroup.setGroupType(updateGroupInformRequestDTO.getGroupType());
+        findGroup.setGroupName(updateGroupInformRequestDTO.getGroupName());
+        findGroup.setGroupDescription(updateGroupInformRequestDTO.getGroupDescription());
     }
 }

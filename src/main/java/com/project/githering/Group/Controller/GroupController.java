@@ -29,7 +29,7 @@ public class GroupController {
     @PostMapping
     public ResponseEntity<Void> createGroup(@RequestBody @Valid CreateGroupRequestDTO createGroupRequestDTO) {
         Long userId = generalUserService.findIdByAuthentication();
-        groupService.createGroup(createGroupRequestDTO.toEntity(userId));
+        groupService.createGroup(userId, createGroupRequestDTO);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -77,9 +77,8 @@ public class GroupController {
     public ResponseEntity<Void> updateMaster(@RequestBody @Valid UpdateGroupMasterRequestDTO updateGroupMasterRequestDTO) {
         Long userId = generalUserService.findIdByAuthentication();
         groupService.updateMaster(
-                updateGroupMasterRequestDTO.getGroupId(),
                 userId,
-                updateGroupMasterRequestDTO.getNewGroupMasterId()
+                updateGroupMasterRequestDTO
         );
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -89,10 +88,7 @@ public class GroupController {
         Long userId = generalUserService.findIdByAuthentication();
         groupService.updateInform(
                 userId,
-                updateGroupInformRequestDTO.getGroupId(),
-                updateGroupInformRequestDTO.getGroupType(),
-                updateGroupInformRequestDTO.getGroupName(),
-                updateGroupInformRequestDTO.getGroupDescription()
+                updateGroupInformRequestDTO
         );
 
         return new ResponseEntity<>(HttpStatus.OK);
