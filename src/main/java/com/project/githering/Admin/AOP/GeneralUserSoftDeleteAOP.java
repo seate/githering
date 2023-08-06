@@ -1,4 +1,4 @@
-package com.project.githering.Admin.Annotation;
+package com.project.githering.Admin.AOP;
 
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
