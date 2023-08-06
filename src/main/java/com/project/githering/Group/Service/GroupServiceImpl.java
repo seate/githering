@@ -2,6 +2,7 @@ package com.project.githering.Group.Service;
 
 import com.project.githering.Group.Belong.Service.GroupBelongService;
 import com.project.githering.Group.Entity.Group;
+import com.project.githering.Group.Enum.GroupType;
 import com.project.githering.Group.Exception.GroupExistException;
 import com.project.githering.Group.Exception.GroupNotExistException;
 import com.project.githering.Group.Exception.NoAuthorityException;
@@ -109,10 +110,20 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public void updateMaster(Long groupId, Long masterId, Long newMasterId) {
+    public void updateMaster(Long groupId, Long masterId, Long newMasterId) throws GroupNotExistException, NoAuthorityException {
         Group findGroup = groupRepository.findById(groupId).orElseThrow(GroupNotExistException::new);
-        if (!findGroup.getGroupMasterId().equals(masterId)) throw new NoAuthorityException();
+        if (!isGroupMaster(findGroup.getGroupId(), masterId)) throw new NoAuthorityException();
 
         findGroup.setGroupMasterId(newMasterId);
+    }
+
+    @Override
+    public void updateInform(Long userId, Long groupId, GroupType groupType, String groupName, String groupDescription) throws GroupNotExistException, NoAuthorityException {
+        if (!isGroupMaster(userId, groupId)) throw new NoAuthorityException();
+
+        Group findGroup = groupRepository.findById(groupId).orElseThrow(GroupNotExistException::new);
+        findGroup.setGroupType(groupType);
+        findGroup.setGroupName(groupName);
+        findGroup.setGroupDescription(groupDescription);
     }
 }

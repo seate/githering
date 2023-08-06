@@ -1,6 +1,7 @@
 package com.project.githering.Group.Service;
 
 import com.project.githering.Group.Entity.Group;
+import com.project.githering.Group.Enum.GroupType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -30,4 +31,6 @@ public interface GroupService {
 
     //UPDATE
     void updateMaster(Long groupId, Long masterId, Long newMasterId);
+
+    void updateInform(Long userId, Long groupId, GroupType groupType, String groupName, String groupDescription);
 }
