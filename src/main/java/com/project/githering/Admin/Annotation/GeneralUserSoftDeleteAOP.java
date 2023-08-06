@@ -1,6 +1,7 @@
 package com.project.githering.Admin.Annotation;
 
 import jakarta.persistence.EntityManager;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -11,19 +12,20 @@ import org.springframework.stereotype.Component;
 @Component
 @Aspect
 @Slf4j
+@RequiredArgsConstructor
 public class GeneralUserSoftDeleteAOP {
 
     private final EntityManager entityManager;
 
-    private final ThreadLocal<Boolean> isExclude = new ThreadLocal<>();
-
     // 여기를 바꾸면 Entity의 @FilterDef(~) 의 name도 바꿔줘야 함
     private final String filterName = "softDeleteGeneralUserFilter";
 
-    public GeneralUserSoftDeleteAOP(EntityManager entityManager) {
-        this.entityManager = entityManager;
-        this.isExclude.set(true);
-    }
+    private final ThreadLocal<Boolean> isExclude = new ThreadLocal<>() {
+        @Override
+        protected Boolean initialValue() {
+            return true;
+        }
+    };
 
     @Around("execution(* com.project.githering.User.General.Service.*.*(..))")
     public Object exclude(ProceedingJoinPoint joinPoint) throws Throwable {
