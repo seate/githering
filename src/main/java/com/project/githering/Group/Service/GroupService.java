@@ -23,9 +23,11 @@ public interface GroupService {
     void withdrawalGroup(Long userId, Long groupId);
 
     //READ
-    Optional<Group> findGroupByName(String groupName);
+    boolean isGroupMaster(Long userId, Long groupId);
 
     Optional<Group> findGroupById(Long groupId);
+
+    Optional<Group> findGroupByName(String groupName);
 
     Integer findCount(Long groupId);
 
