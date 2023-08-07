@@ -7,6 +7,8 @@ public interface GroupBelongService {
 
     void withdrawalGroup(Long userId, Long groupId);
 
+    void withdrawalAllByGroupId(Long groupId);
+
     boolean isJoined(Long userId, Long groupId);
 
     Integer countByGroupId(Long groupId);

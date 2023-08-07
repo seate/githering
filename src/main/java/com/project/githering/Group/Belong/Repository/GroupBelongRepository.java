@@ -15,6 +15,8 @@ public interface GroupBelongRepository extends JpaRepository<GroupBelong, GroupB
     //DELETE
     void delete(GroupBelong groupBelong);
 
+    void deleteAllByGroupId(Long groupId);
+
     //READ
     boolean existsByUserIdAndGroupId(Long userId, Long groupId);
 

@@ -13,21 +13,30 @@ import java.util.Optional;
 // jwtAuthenticationFilter에서 authenticate하기 위해 userDetailsService를 상속받아야함
 public interface GeneralUserService extends OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
+    //ETC
     void logout(String accessToken);
 
+
+
+    //DELETE
     void withdrawal(Long userId, String accessToken);
+
+
+
+    //READ
+    boolean isAdmin(Long userId);
+
+    List<GeneralUser> findAllAdmin();
+
+
+    Long findIdByAuthentication();
+
 
     Optional<GeneralUser> findById(Long id);
 
     Optional<GeneralUser> findByLoginUser(String loginUser);
 
     String findLoginUserById(Long id);
-
-    Long findIdByLoginUser(String loginUser);
-
-    Long findIdByAuthentication();
-
-    List<GeneralUser> findAllAdmin();
 
     Page<GeneralUser> findAll(Pageable pageable);
 }

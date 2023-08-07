@@ -66,23 +66,13 @@ public class GroupController {
         return new ResponseEntity<>(groupList, HttpStatus.OK);
     }
 
-    @GetMapping("/{groupName}")
-    public ResponseEntity<GroupInformResponseDTO> findGroupByName(@PathVariable String groupName) {
-        Group findGroup = groupService.findGroupByName(groupName).orElseThrow(GroupNotExistException::new);
+    @GetMapping("/{groupId}")
+    public ResponseEntity<GroupInformResponseDTO> findGroupById(@PathVariable Long groupId) {
+        Group findGroup = groupService.findGroupById(groupId).orElseThrow(GroupNotExistException::new);
         return new ResponseEntity<>(new GroupInformResponseDTO(findGroup), HttpStatus.OK);
     }
 
-
-    @PatchMapping("/master")
-    public ResponseEntity<Void> updateMaster(@RequestBody @Valid UpdateGroupMasterRequestDTO updateGroupMasterRequestDTO) {
-        Long userId = generalUserService.findIdByAuthentication();
-        groupService.updateMaster(
-                userId,
-                updateGroupMasterRequestDTO
-        );
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
+    //UPDATE
     @PatchMapping("/inform")
     public ResponseEntity<Void> updateInform(@RequestBody @Valid UpdateGroupInformRequestDTO updateGroupInformRequestDTO) {
         Long userId = generalUserService.findIdByAuthentication();

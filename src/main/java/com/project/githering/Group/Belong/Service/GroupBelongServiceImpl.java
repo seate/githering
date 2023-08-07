@@ -30,6 +30,11 @@ public class GroupBelongServiceImpl implements GroupBelongService {
     }
 
     @Override
+    public void withdrawalAllByGroupId(Long groupId) {
+        groupBelongRepository.deleteAllByGroupId(groupId);
+    }
+
+    @Override
     public boolean isJoined(Long userId, Long groupId) {
         return groupBelongRepository.existsByUserIdAndGroupId(userId, groupId);
     }

@@ -53,6 +53,7 @@ public class GeneralUserServiceImpl implements GeneralUserService {
         return this.passwordEncoder;
     }
 
+    //CREATE, UPDATE
     @Override // oAuth2 client가 기타 처리를 한 후 OAuth2UserRequest를 건내줌
     @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -78,6 +79,7 @@ public class GeneralUserServiceImpl implements GeneralUserService {
     }
 
 
+
     // DELETE
     @Override
     @Transactional
@@ -96,6 +98,29 @@ public class GeneralUserServiceImpl implements GeneralUserService {
         refreshTokenService.deleteByLoginUser(jwtTokenProvider.getLoginUserByAccessToken(accessToken));
     }
 
+
+
+    //READ
+    @Override
+    public boolean isAdmin(Long userId) {
+        return findAllAdmin()
+                .stream().map(GeneralUser::getId)
+                .anyMatch(id -> id.equals(userId));
+    }
+
+    @Override
+    public List<GeneralUser> findAllAdmin() {
+        return generalUserRepository.findAllByRole(Role.ROLE_ADMIN);
+    }
+
+
+    @Override
+    public Long findIdByAuthentication() {
+        GeneralUser generalUser = (GeneralUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return generalUser.getId();
+    }
+
+
     @Override
     public Optional<GeneralUser> findById(Long id) {
         return generalUserRepository.findById(id);
@@ -109,22 +134,6 @@ public class GeneralUserServiceImpl implements GeneralUserService {
     @Override
     public String findLoginUserById(Long id) throws UserNotExistException {
         return generalUserRepository.findById(id).orElseThrow(UserNotExistException::new).getLoginUser();
-    }
-
-    @Override
-    public Long findIdByLoginUser(String loginUser) throws UserNotExistException {
-        return generalUserRepository.findByLoginUser(loginUser).orElseThrow(UserNotExistException::new).getId();
-    }
-
-    @Override
-    public Long findIdByAuthentication() {
-        GeneralUser generalUser = (GeneralUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return generalUser.getId();
-    }
-
-    @Override
-    public List<GeneralUser> findAllAdmin() {
-        return generalUserRepository.findAllByRole(Role.ROLE_ADMIN);
     }
 
     @Override

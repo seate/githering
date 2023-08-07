@@ -60,7 +60,8 @@ public class UserController {
 
     @GetMapping("/findIdByLoginUser")
     public ResponseEntity<Long> findIdByLoginUser(@RequestParam(value = "loginUser") String loginUser) {
-        return new ResponseEntity<>(generalUserService.findIdByLoginUser(loginUser), HttpStatus.OK);
+        Long userId = generalUserService.findByLoginUser(loginUser).orElseThrow(UserNotExistException::new).getId();
+        return new ResponseEntity<>(userId, HttpStatus.OK);
     }
 
     @GetMapping("/findLoginUserById")

@@ -2,7 +2,6 @@ package com.project.githering.Group.Service;
 
 import com.project.githering.Group.DTO.CreateGroupRequestDTO;
 import com.project.githering.Group.DTO.UpdateGroupInformRequestDTO;
-import com.project.githering.Group.DTO.UpdateGroupMasterRequestDTO;
 import com.project.githering.Group.Entity.Group;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,15 +15,22 @@ public interface GroupService {
 
     void joinGroup(Long userId, Long groupId);
 
+
+
     //DELETE
     void deleteGroupById(Long userId, Long groupId);
 
-
     void withdrawalGroup(Long userId, Long groupId);
 
+
+
     //READ
+    boolean isMaster(Long userId, Long groupId);
 
     boolean hasMasterAuthority(Long userId, Long groupId);
+
+
+    boolean existById(Long groupId);
 
     Optional<Group> findGroupById(Long groupId);
 
@@ -34,8 +40,8 @@ public interface GroupService {
 
     Page<Group> findAllGroup(Pageable pageable);
 
-    //UPDATE
-    void updateMaster(Long userId, UpdateGroupMasterRequestDTO updateGroupMasterRequestDTO);
 
+
+    //UPDATE
     void updateInform(Long userId, UpdateGroupInformRequestDTO updateGroupInformRequestDTO);
 }

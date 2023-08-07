@@ -4,13 +4,12 @@ import com.project.githering.Group.Belong.Exception.AlreadyJoinedException;
 import com.project.githering.Group.Belong.Service.GroupBelongService;
 import com.project.githering.Group.DTO.CreateGroupRequestDTO;
 import com.project.githering.Group.DTO.UpdateGroupInformRequestDTO;
-import com.project.githering.Group.DTO.UpdateGroupMasterRequestDTO;
 import com.project.githering.Group.Entity.Group;
 import com.project.githering.Group.Exception.GroupExistException;
 import com.project.githering.Group.Exception.GroupNotExistException;
 import com.project.githering.Group.Exception.NoAuthorityException;
 import com.project.githering.Group.Repository.GroupRepository;
-import com.project.githering.User.General.Entity.GeneralUser;
+import com.project.githering.User.General.Exception.UserNotExistException;
 import com.project.githering.User.General.Service.GeneralUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +31,8 @@ public class GroupServiceImpl implements GroupService {
 
     private final GeneralUserService generalUserService;
 
+
+    //CREATE
     @Override
     @Transactional
     public void createGroup(Long userId, CreateGroupRequestDTO createGroupRequestDTO) throws GroupExistException, GroupNotExistException {
@@ -64,11 +65,22 @@ public class GroupServiceImpl implements GroupService {
     }
 
 
+
+    //DELETE
     @Override
     @Transactional
     public void deleteGroupById(Long userId, Long groupId) throws GroupNotExistException, NoAuthorityException {
         if (!existById(groupId)) throw new GroupNotExistException();
-        if (!hasMasterAuthority(userId, groupId)) throw new NoAuthorityException();
+
+        if (isMaster(userId, groupId)) { // 그룹장이면
+            if (findCount(groupId) != 1) //TODO 나중에 로직 더 생각해서 수정
+                throw new NoAuthorityException("그룹원이 한 명이 아니면 그룹을 삭제할 수 없습니다.");
+        }
+        else if (!generalUserService.isAdmin(userId)) // admin이 아니면
+            throw new NoAuthorityException("그룹을 삭제할 권한이 없습니다.");
+
+        // 그룹 탈퇴 처리
+        groupBelongService.withdrawalAllByGroupId(groupId);
 
         groupRepository.deleteById(groupId);
     }
@@ -86,18 +98,22 @@ public class GroupServiceImpl implements GroupService {
     }
 
 
+
+    //READ
     @Override
-    public boolean hasMasterAuthority(Long userId, Long groupId) throws GroupNotExistException {
-        return (findGroupById(groupId)
+    public boolean isMaster(Long userId, Long groupId) {
+        return findGroupById(groupId)
                 .orElseThrow(GroupNotExistException::new)
-                .getGroupMasterId().equals(userId)
-                || generalUserService
-                .findAllAdmin()
-                .stream().map(GeneralUser::getId)
-                .anyMatch(id -> id.equals(userId))
-        );
+                .getGroupMasterId().equals(userId);
     }
 
+    @Override
+    public boolean hasMasterAuthority(Long userId, Long groupId) throws GroupNotExistException {
+        return (isMaster(userId, groupId) || generalUserService.isAdmin(userId));
+    }
+
+
+    @Override
     public boolean existById(Long groupId) {
         return groupRepository.existsById(groupId);
     }
@@ -124,25 +140,24 @@ public class GroupServiceImpl implements GroupService {
         return groupRepository.findAll(pageable);
     }
 
+
+
+    //UPDATE
     @Override
     @Transactional
-    public void updateMaster(Long userId, UpdateGroupMasterRequestDTO updateGroupMasterRequestDTO) throws GroupNotExistException, NoAuthorityException {
-        Long groupId = updateGroupMasterRequestDTO.getGroupId();
-        if (!hasMasterAuthority(userId, groupId)) throw new NoAuthorityException();
+    public void updateInform(Long userId, UpdateGroupInformRequestDTO updateGroupInformRequestDTO)
+            throws GroupNotExistException, NoAuthorityException, UserNotExistException {
 
-        Long newGroupMasterId = updateGroupMasterRequestDTO.getNewGroupMasterId();
-
-        Group findGroup = groupRepository.findById(groupId).orElseThrow(GroupNotExistException::new);
-
-        findGroup.setGroupMasterId(newGroupMasterId);
-    }
-
-    @Override
-    public void updateInform(Long userId, UpdateGroupInformRequestDTO updateGroupInformRequestDTO) throws GroupNotExistException, NoAuthorityException {
         Long groupId = updateGroupInformRequestDTO.getGroupId();
         if (!hasMasterAuthority(userId, groupId)) throw new NoAuthorityException();
 
+        Long newGroupMasterId = updateGroupInformRequestDTO.getNewGroupMasterId();
+        generalUserService.findById(newGroupMasterId).orElseThrow(UserNotExistException::new);
+        if (!groupBelongService.isJoined(newGroupMasterId, groupId))
+            throw new NoAuthorityException("그룹원이 아닌 사용자를 그룹장으로 설정할 수 없습니다.");
+
         Group findGroup = groupRepository.findById(groupId).orElseThrow(GroupNotExistException::new);
+        findGroup.setGroupMasterId(newGroupMasterId);
         findGroup.setGroupType(updateGroupInformRequestDTO.getGroupType());
         findGroup.setGroupName(updateGroupInformRequestDTO.getGroupName());
         findGroup.setGroupDescription(updateGroupInformRequestDTO.getGroupDescription());
