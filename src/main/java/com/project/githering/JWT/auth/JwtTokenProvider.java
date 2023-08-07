@@ -3,10 +3,7 @@ package com.project.githering.JWT.auth;
 import com.project.githering.JWT.Exception.AccessTokenExpiredException;
 import com.project.githering.JWT.Exception.RefreshTokenExpiredException;
 import com.project.githering.JWT.Exception.TokenNotValidException;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -150,7 +147,7 @@ public class JwtTokenProvider {
             Jwts.parser().setSigningKey(accessTokenSecretKey).parseClaimsJws(accessToken); // parsing 시에 검증 됨
         } catch (ExpiredJwtException e) {
             throw new AccessTokenExpiredException();
-        } catch (SignatureException e) {
+        } catch (MalformedJwtException | SignatureException e) {
             throw new TokenNotValidException();
         }
     }
@@ -160,7 +157,7 @@ public class JwtTokenProvider {
             Jwts.parser().setSigningKey(refreshTokenSecretKey).parseClaimsJws(refreshToken); // parsing 시에 검증 됨
         } catch (ExpiredJwtException e) {
             throw new RefreshTokenExpiredException();
-        } catch (SignatureException e) {
+        } catch (MalformedJwtException | SignatureException e) {
             throw new TokenNotValidException();
         }
     }
