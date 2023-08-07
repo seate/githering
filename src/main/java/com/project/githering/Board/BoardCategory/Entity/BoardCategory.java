@@ -22,7 +22,7 @@ public class BoardCategory extends BaseTimeEntity {
     @Column(nullable = false)
     private Long groupId;
 
-    @Column
+    @Column(nullable = false)
     private String categoryName;
 
     @Builder

@@ -27,7 +27,7 @@ public class BoardCategoryServiceImpl implements BoardCategoryService {
     private final GroupService groupService;
 
     private void validateAuthority(Long userId, Long groupId) {
-        if (!groupService.hasAuthority(userId, groupId))
+        if (!groupService.hasMasterAuthority(userId, groupId))
             throw new NoAuthorityException();
     }
 
@@ -57,6 +57,12 @@ public class BoardCategoryServiceImpl implements BoardCategoryService {
         //TODO 카테고리 내에 있는 글들을 모두 삭제 or 이동해야함
 
         boardCategoryRepository.delete(boardCategory);
+    }
+
+    @Override
+    public String findCategoryNameByCategoryId(Long categoryId) {
+        return boardCategoryRepository.findByCategoryId(categoryId)
+                .orElseThrow(BoardCategoryNotExistException::new).getCategoryName();
     }
 
     //READ

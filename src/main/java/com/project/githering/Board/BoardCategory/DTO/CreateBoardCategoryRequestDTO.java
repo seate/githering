@@ -2,6 +2,7 @@ package com.project.githering.Board.BoardCategory.DTO;
 
 import com.project.githering.Board.BoardCategory.Entity.BoardCategory;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CreateBoardCategoryRequestDTO {
 
-    @NotBlank
+    @NotNull
     private Long groupId;
 
     @NotBlank

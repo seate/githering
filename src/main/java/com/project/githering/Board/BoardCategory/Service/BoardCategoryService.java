@@ -14,6 +14,8 @@ public interface BoardCategoryService {
 
     void deleteCategory(Long userId, DeleteBoardCategoryRequestDTO deleteBoardCategoryRequestDTO);
 
+    String findCategoryNameByCategoryId(Long categoryId);
+
     List<BoardCategory> findAllCategoryByGroupId(FindAllBoardCategoryRequestDTO findAllBoardCategoryRequestDTO);
 
     void updateCategory(Long userId, UpdateBoardCategoryRequestDTO updateBoardCategoryRequestDTO);

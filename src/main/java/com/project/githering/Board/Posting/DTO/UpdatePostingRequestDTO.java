@@ -1,4 +1,4 @@
-package com.project.githering.Board.BoardCategory.DTO;
+package com.project.githering.Board.Posting.DTO;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -9,11 +9,14 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateBoardCategoryRequestDTO {
+public class UpdatePostingRequestDTO {
 
     @NotNull
     private Long categoryId;
 
     @NotBlank
-    private String categoryName;
+    private String title;
+
+    @NotBlank
+    private String content;
 }
