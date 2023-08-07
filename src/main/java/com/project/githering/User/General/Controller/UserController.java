@@ -63,8 +63,8 @@ public class UserController {
         return new ResponseEntity<>(generalUserService.findIdByLoginUser(loginUser), HttpStatus.OK);
     }
 
-    @GetMapping("/findEmailById")
-    public ResponseEntity<String> findEmailById(@RequestParam(value = "id") Long id) {
+    @GetMapping("/findLoginUserById")
+    public ResponseEntity<String> findLoginUserById(@RequestParam(value = "id") Long id) {
         return new ResponseEntity<>(generalUserService.findLoginUserById(id), HttpStatus.OK);
     }
 }
