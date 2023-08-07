@@ -2,6 +2,7 @@ package com.project.githering.Group.DTO;
 
 import com.project.githering.Group.Entity.Group;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GroupInformResponseDTO {
 
-    @NotBlank
+    @NotNull
     private Long groupId;
 
     @NotBlank

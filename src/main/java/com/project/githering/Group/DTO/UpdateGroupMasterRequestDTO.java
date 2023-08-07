@@ -1,6 +1,6 @@
 package com.project.githering.Group.DTO;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UpdateGroupMasterRequestDTO {
 
-    @NotBlank
+    @NotNull
     private Long groupId;
 
-    @NotBlank
+    @NotNull
     private Long newGroupMasterId;
 }

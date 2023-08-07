@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.hibernate.Filter;
 import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +33,8 @@ public class GeneralUserSoftDeleteAOP {
         if (!isExclude.get()) return joinPoint.proceed();
 
         Session session = entityManager.unwrap(Session.class);
-        session.enableFilter(filterName);
+        Filter filter = session.enableFilter(filterName);
+        filter.setParameter("isDeleted", true);
 
         try {
             return joinPoint.proceed();
