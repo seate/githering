@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CreateGroupRequestDTO {
 
-    @NotBlank
     private GroupType groupType;
 
     @NotBlank

@@ -2,6 +2,7 @@ package com.project.githering.Group.DTO;
 
 import com.project.githering.Group.Enum.GroupType;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,13 +12,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UpdateGroupInformRequestDTO {
 
-    @NotBlank
+    @NotNull
     private Long groupId;
 
-    @NotBlank
+    @NotNull
     private Long newGroupMasterId;
 
-    @NotBlank
     private GroupType groupType;
 
     @NotBlank
