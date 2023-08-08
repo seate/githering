@@ -34,7 +34,7 @@ public class GeneralUserSoftDeleteAOP {
 
         Session session = entityManager.unwrap(Session.class);
         Filter filter = session.enableFilter(filterName);
-        filter.setParameter("isDeleted", true);
+        filter.setParameter("isDeleted", false);
 
         try {
             return joinPoint.proceed();
