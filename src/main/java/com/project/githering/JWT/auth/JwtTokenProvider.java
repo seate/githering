@@ -6,6 +6,7 @@ import com.project.githering.JWT.Exception.TokenNotValidException;
 import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -14,16 +15,20 @@ import java.util.*;
 
 @RequiredArgsConstructor
 @Component
+
 public class JwtTokenProvider {
 
     @Value("${jwt.accessToken.tokenPrefix}")
     private String tokenPrefix;
 
+    @Getter
     @Value("${jwt.accessToken.SendingHeaderName}")
     private String accessTokenSendingHeaderName;
 
+    @Getter
     @Value("${jwt.accessToken.GettingHeaderName}")
     private String accessTokenGettingHeaderName;
+    @Getter
     @Value("${jwt.refreshToken.headerName}")
     private String refreshTokenHeaderName;
 

@@ -1,6 +1,8 @@
 package com.project.githering.User.OAuth2.Handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.githering.JWT.Entity.RefreshToken;
+import com.project.githering.JWT.Service.RefreshTokenService;
 import com.project.githering.User.OAuth2.GeneralOAuth2User.GeneralOAuth2User;
 import com.project.githering.JWT.auth.JwtTokenProvider;
 import jakarta.servlet.ServletException;
@@ -24,6 +26,8 @@ public class oAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private final JwtTokenProvider jwtTokenProvider;
     private final ObjectMapper objectMapper;
 
+    private final RefreshTokenService refreshTokenService;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         log.info("OAuth2 Authentication Success");
@@ -37,5 +41,14 @@ public class oAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         // REST 형식이므로 필요없음
         //super.onAuthenticationSuccess(request, response, authentication);
+        String refreshTokenValue = (String) responseBodyWriting.get(jwtTokenProvider.getRefreshTokenHeaderName());
+
+        RefreshToken refreshToken = new RefreshToken(
+                loginUser,
+                refreshTokenValue,
+                jwtTokenProvider.getRemainingTimeByRefreshToken(refreshTokenValue)
+        );
+
+        refreshTokenService.saveOrUpdate(refreshToken);
     }
 }
