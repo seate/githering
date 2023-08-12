@@ -40,14 +40,14 @@ public class PostingServiceImpl implements PostingService {
     //CREATE
     @Override
     @Transactional
-    public void savePosting(Long userId, CreatePostingRequestDTO createPostingRequestDTO) {
+    public Long savePosting(Long userId, CreatePostingRequestDTO createPostingRequestDTO) {
         Long groupId = createPostingRequestDTO.getGroupId();
         if (!groupBelongService.isJoined(userId, groupId))
             throw new NoAuthorityException("그룹에 가입해야 글을 작성할 수 있습니다.");
 
         Posting posting = createPostingRequestDTO.toEntity(userId);
 
-        postingRepository.save(posting);
+        return postingRepository.save(posting).getPostingId();
     }
 
 

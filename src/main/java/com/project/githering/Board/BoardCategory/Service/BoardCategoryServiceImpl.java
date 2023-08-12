@@ -34,7 +34,7 @@ public class BoardCategoryServiceImpl implements BoardCategoryService {
     //CREATE
     @Override
     @Transactional
-    public void saveCategory(Long userId, CreateBoardCategoryRequestDTO createBoardCategoryRequestDTO) throws NoAuthorityException, BoardCategoryExistException {
+    public Long saveCategory(Long userId, CreateBoardCategoryRequestDTO createBoardCategoryRequestDTO) throws NoAuthorityException, BoardCategoryExistException {
         Long groupId = createBoardCategoryRequestDTO.getGroupId();
         validateAuthority(userId, groupId);
 
@@ -42,7 +42,7 @@ public class BoardCategoryServiceImpl implements BoardCategoryService {
             throw new BoardCategoryExistException("같은 이름의 카테고리가 이미 존재합니다.");
 
 
-        boardCategoryRepository.save(createBoardCategoryRequestDTO.toEntity());
+        return boardCategoryRepository.save(createBoardCategoryRequestDTO.toEntity()).getCategoryId();
     }
 
     //DELETE

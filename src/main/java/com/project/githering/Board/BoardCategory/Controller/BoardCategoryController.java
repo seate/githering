@@ -23,11 +23,9 @@ public class BoardCategoryController {
 
     //CREATE
     @PostMapping
-    public ResponseEntity<Void> createBoardCategory(@RequestBody @Valid CreateBoardCategoryRequestDTO createBoardCategoryRequestDTO) {
+    public ResponseEntity<Long> createBoardCategory(@RequestBody @Valid CreateBoardCategoryRequestDTO createBoardCategoryRequestDTO) {
         Long userId = generalUserService.findIdByAuthentication();
-        boardCategoryService.saveCategory(userId, createBoardCategoryRequestDTO);
-
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(boardCategoryService.saveCategory(userId, createBoardCategoryRequestDTO), HttpStatus.OK);
     }
 
     //DELETE

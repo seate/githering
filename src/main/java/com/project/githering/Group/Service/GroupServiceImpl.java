@@ -35,18 +35,14 @@ public class GroupServiceImpl implements GroupService {
     //CREATE
     @Override
     @Transactional
-    public void createGroup(Long userId, CreateGroupRequestDTO createGroupRequestDTO) throws GroupExistException, GroupNotExistException {
+    public Long createGroup(Long userId, CreateGroupRequestDTO createGroupRequestDTO) throws GroupExistException, GroupNotExistException {
         Group group = createGroupRequestDTO.toEntity(userId);
 
-        findGroupByName(group.getGroupName()).ifPresentOrElse(
-                g -> {throw new GroupExistException();},
-                () -> {
-                    groupRepository.save(group);
-                    Long groupId = findGroupByName(group.getGroupName())
-                            .orElseThrow(GroupNotExistException::new).getGroupId();
-                    joinGroup(group.getGroupMasterId(), groupId);
-                }
-        );
+        findGroupByName(group.getGroupName()).ifPresent(g -> {throw new GroupExistException();});
+
+        Long groupId = groupRepository.save(group).getGroupId();
+        joinGroup(group.getGroupMasterId(), groupId);
+        return groupId;
     }
 
     @Override
