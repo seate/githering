@@ -25,6 +25,7 @@ public class PostingController {
 
     private final GeneralUserService generalUserService;
 
+    //CREATE
     @PostMapping
     public ResponseEntity<Void> createPosting(@RequestBody @Valid CreatePostingRequestDTO createPostingRequestDTO) {
         Long userId = generalUserService.findIdByAuthentication();
@@ -33,6 +34,8 @@ public class PostingController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+
+    //DELETE
     @DeleteMapping("/{postingId}")
     public ResponseEntity<Void> deletePosting(@PathVariable Long postingId) {
         Long userId = generalUserService.findIdByAuthentication();
@@ -41,17 +44,47 @@ public class PostingController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping
-    public ResponseEntity<List<SimplePostingInformResponseDTO>> findAllPostingByGroupId(@RequestParam Long categoryId, Pageable pageable) {
+
+    //READ
+    @GetMapping("/{postingId}")
+    public ResponseEntity<DetailPostingInformResponseDTO> findPosting(@PathVariable Long postingId) {
+        return new ResponseEntity<>(postingService.findDetailPostingInformById(postingId), HttpStatus.OK);
+    }
+
+    @GetMapping("/group/{groupId}")
+    public ResponseEntity<List<SimplePostingInformResponseDTO>> findAllByGroupId(@PathVariable Long groupId, Pageable pageable) {
+        return new ResponseEntity<>(postingService.findAllPostingByGroupId(groupId, pageable).getContent(), HttpStatus.OK);
+    }
+
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<List<SimplePostingInformResponseDTO>> findAllByCategoryId(@PathVariable Long categoryId, Pageable pageable) {
         Long userId = generalUserService.findIdByAuthentication();
         List<SimplePostingInformResponseDTO> SimplePostingList = postingService
                 .findAllSimplePostingInformByCategoryId(userId, categoryId, pageable).getContent();
         return new ResponseEntity<>(SimplePostingList, HttpStatus.OK);
     }
 
-    @GetMapping("/{postingId}")
-    public ResponseEntity<DetailPostingInformResponseDTO> findPosting(@PathVariable Long postingId) {
-        return new ResponseEntity<>(postingService.findDetailPostingInformById(postingId), HttpStatus.OK);
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<SimplePostingInformResponseDTO>> findAllByUserId(@PathVariable Long userId, Pageable pageable) {
+        return new ResponseEntity<>(postingService.findAllPostingByUserId(userId, pageable).getContent(), HttpStatus.OK);
+    }
+
+
+    //UPDATE
+    @PatchMapping("/{postingId}/like")
+    public ResponseEntity<Void> updateLike(@PathVariable Long postingId) {
+        Long userId = generalUserService.findIdByAuthentication();
+        postingService.updateLike(userId, postingId);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PatchMapping("/{postingId}/dislike")
+    public ResponseEntity<Void> updateDislike(@PathVariable Long postingId) {
+        Long userId = generalUserService.findIdByAuthentication();
+        postingService.updateDislike(userId, postingId);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PatchMapping("/{postingId}")

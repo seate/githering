@@ -33,6 +33,12 @@ public class DetailPostingInformResponseDTO {
     @NotNull
     private LocalDate createdDate;
 
+    @NotNull
+    private Integer likeCount;
+
+    @NotNull
+    private Integer dislikeCount;
+
     public DetailPostingInformResponseDTO(String categoryName, String userName, Posting posting) {
         this.postingId = posting.getPostingId();
         this.groupId = posting.getGroupId();
@@ -41,5 +47,7 @@ public class DetailPostingInformResponseDTO {
         this.userName = userName;
         this.viewCount = posting.getViewCount();
         this.createdDate = posting.getCreateTime().toLocalDate();
+        this.likeCount = posting.getLikeCount();
+        this.dislikeCount = posting.getDislikeCount();
     }
 }

@@ -21,12 +21,16 @@ public interface PostingService {
 
     DetailPostingInformResponseDTO findDetailPostingInformById(Long postingId);
 
-    Page<Posting> findAllPostingByGroupId(Long groupId, Pageable pageable);
+    Page<SimplePostingInformResponseDTO> findAllPostingByGroupId(Long groupId, Pageable pageable);
 
     Page<SimplePostingInformResponseDTO> findAllSimplePostingInformByCategoryId(Long userId, Long categoryId, Pageable pageable);
 
-    Page<Posting> findAllPostingByUserId(Long userId, Pageable pageable);
+    Page<SimplePostingInformResponseDTO> findAllPostingByUserId(Long userId, Pageable pageable);
 
     //UPDATE
+    void updateLike(Long userId, Long postingId);
+
+    void updateDislike(Long userId, Long postingId);
+
     void updatePosting(Long userId, Long postingId, UpdatePostingRequestDTO updatePostingRequestDTO);
 }
