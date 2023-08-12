@@ -27,10 +27,9 @@ public class GroupController {
 
     //CREATE
     @PostMapping
-    public ResponseEntity<Void> createGroup(@RequestBody @Valid CreateGroupRequestDTO createGroupRequestDTO) {
+    public ResponseEntity<Long> createGroup(@RequestBody @Valid CreateGroupRequestDTO createGroupRequestDTO) {
         Long userId = generalUserService.findIdByAuthentication();
-        groupService.createGroup(userId, createGroupRequestDTO);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(groupService.createGroup(userId, createGroupRequestDTO), HttpStatus.CREATED);
     }
 
     @PostMapping("/join")

@@ -6,6 +6,7 @@ import com.project.githering.Board.Posting.Addon.PostingLike.Entity.PostingLike;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -17,6 +18,7 @@ public class PostingLikeServiceImpl implements PostingLikeService {
     private final PostingLikeRepository postingLikeRepository;
 
     @Override
+    @Transactional
     public void saveOrUpdatePostingLike(Long postingId, Long userId, Boolean isLike) throws PostingLikeExistException {
         postingLikeRepository.findByPostingIdAndUserId(postingId, userId)
                 .ifPresentOrElse(
@@ -32,6 +34,7 @@ public class PostingLikeServiceImpl implements PostingLikeService {
     }
 
     @Override
+    @Transactional
     public void deletePostingLike(Long postingId, Long userId) {
         postingLikeRepository.deleteByPostingIdAndUserId(postingId, userId);
     }

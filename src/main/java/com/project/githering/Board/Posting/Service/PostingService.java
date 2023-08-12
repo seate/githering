@@ -11,7 +11,7 @@ import org.springframework.data.domain.Pageable;
 public interface PostingService {
 
     //CREATE
-    void savePosting(Long userId, CreatePostingRequestDTO createPostingRequestDTO);
+    Long savePosting(Long userId, CreatePostingRequestDTO createPostingRequestDTO);
 
     //DELETE
     void deletePosting(Long userId, Long postingId);

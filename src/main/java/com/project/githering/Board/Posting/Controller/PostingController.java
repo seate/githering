@@ -27,11 +27,9 @@ public class PostingController {
 
     //CREATE
     @PostMapping
-    public ResponseEntity<Void> createPosting(@RequestBody @Valid CreatePostingRequestDTO createPostingRequestDTO) {
+    public ResponseEntity<Long> createPosting(@RequestBody @Valid CreatePostingRequestDTO createPostingRequestDTO) {
         Long userId = generalUserService.findIdByAuthentication();
-        postingService.savePosting(userId, createPostingRequestDTO);
-
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(postingService.savePosting(userId, createPostingRequestDTO), HttpStatus.OK);
     }
 
 

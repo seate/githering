@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface GroupService {
 
     //CREATE
-    void createGroup(Long userId, CreateGroupRequestDTO createGroupRequestDTO);
+    Long createGroup(Long userId, CreateGroupRequestDTO createGroupRequestDTO);
 
     void joinGroup(Long userId, Long groupId);
 

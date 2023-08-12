@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface BoardCategoryService {
 
-    void saveCategory(Long userId, CreateBoardCategoryRequestDTO createBoardCategoryRequestDTO);
+    Long saveCategory(Long userId, CreateBoardCategoryRequestDTO createBoardCategoryRequestDTO);
 
     void deleteCategory(Long userId, DeleteBoardCategoryRequestDTO deleteBoardCategoryRequestDTO);
 
