@@ -8,7 +8,9 @@ import java.util.Optional;
 public interface PostingLikeService {
 
     //CREATE, UPDATE
-    void saveOrUpdatePostingLike(Long postingId, Long userId, Boolean isLike);
+    void saveLike(Long postingId, Long userId);
+
+    void saveDislike(Long postingId, Long userId);
 
 
     //DELETE
