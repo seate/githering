@@ -1,14 +1,14 @@
 package com.project.githering.Board.Posting.Service;
 
 import com.project.githering.Board.BoardCategory.Service.BoardCategoryService;
+import com.project.githering.Board.Posting.Addon.Comment.DTO.CommentResponseListDTO;
+import com.project.githering.Board.Posting.Addon.Comment.Service.CommentService;
 import com.project.githering.Board.Posting.DTO.CreatePostingRequestDTO;
 import com.project.githering.Board.Posting.DTO.DetailPostingInformResponseDTO;
 import com.project.githering.Board.Posting.DTO.SimplePostingInformResponseDTO;
 import com.project.githering.Board.Posting.DTO.UpdatePostingRequestDTO;
 import com.project.githering.Board.Posting.Entity.Posting;
 import com.project.githering.Board.Posting.Exception.PostingNotExistException;
-import com.project.githering.Board.Posting.Addon.PostingLike.Exception.PostingLikeExistException;
-import com.project.githering.Board.Posting.Addon.PostingLike.Service.PostingLikeService;
 import com.project.githering.Board.Posting.Repository.PostingRepository;
 import com.project.githering.Group.Belong.Service.GroupBelongService;
 import com.project.githering.Group.Exception.NoAuthorityException;
@@ -34,7 +34,7 @@ public class PostingServiceImpl implements PostingService {
 
     private final BoardCategoryService boardCategoryService;
 
-    private final PostingLikeService postingLikeService;
+    private final CommentService commentService;
 
 
     //CREATE
@@ -80,7 +80,9 @@ public class PostingServiceImpl implements PostingService {
                 .orElseThrow(UserNotExistException::new).getUserName();
         String categoryName = boardCategoryService.findCategoryNameByCategoryId(posting.getCategoryId());
 
-        return new DetailPostingInformResponseDTO(categoryName, userName, posting);
+        CommentResponseListDTO commentList = commentService.findAllCommentByPostingId(postingId);
+
+        return new DetailPostingInformResponseDTO(categoryName, userName, commentList, posting);
     }
 
     @Override
@@ -125,28 +127,22 @@ public class PostingServiceImpl implements PostingService {
 
 
     //UPDATE
-    private void updateLikeOrDisLike(Long userId, Long postingId, Boolean isLikedOrDisliked) throws PostingLikeExistException {
+    public void updateLikeCount(Long postingId, Boolean isLike) {
+        Posting posting = postingRepository.findById(postingId)
+                .orElseThrow(PostingNotExistException::new);
 
-        // 이미 좋아요 또는 싫어요를 눌렀는지 확인됨.
-        postingLikeService.saveOrUpdatePostingLike(userId, postingId, isLikedOrDisliked);
-
-        Posting posting = postingRepository.findById(postingId).orElseThrow(PostingNotExistException::new);
-
-        if (isLikedOrDisliked) posting.setLikeCount(posting.getLikeCount() + 1);
-        else posting.setDislikeCount(posting.getDislikeCount() + 1);
+        int likeDifference = (isLike ? 1 : -1);
+        posting.setLikeCount(posting.getLikeCount() + likeDifference);
     }
 
-    @Override
-    @Transactional
-    public void updateLike(Long userId, Long postingId) {
-        updateLikeOrDisLike(userId, postingId, true);
+    public void updateDisLikeCount(Long postingId, Boolean isDisLike) {
+        Posting posting = postingRepository.findById(postingId)
+                .orElseThrow(PostingNotExistException::new);
+
+        int disLikeDifference = (isDisLike ? 1 : -1);
+        posting.setDislikeCount(posting.getDislikeCount() + disLikeDifference);
     }
 
-    @Override
-    @Transactional
-    public void updateDislike(Long userId, Long postingId) {
-        updateLikeOrDisLike(userId, postingId, false);
-    }
 
     @Override
     @Transactional

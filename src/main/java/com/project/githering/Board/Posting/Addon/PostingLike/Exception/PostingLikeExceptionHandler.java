@@ -13,7 +13,7 @@ public class PostingLikeExceptionHandler {
     }
 
     @ExceptionHandler(PostingLikeNotExistException.class)
-    public ResponseEntity<String> groupNotExist(PostingLikeNotExistException e) {
+    public ResponseEntity<String> postingNotExist(PostingLikeNotExistException e) {
         return new ResponseEntity<>(e.getMessage(), e.getHttpStatus());
     }
 }

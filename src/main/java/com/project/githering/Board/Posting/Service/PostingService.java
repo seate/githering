@@ -28,9 +28,9 @@ public interface PostingService {
     Page<SimplePostingInformResponseDTO> findAllPostingByUserId(Long userId, Pageable pageable);
 
     //UPDATE
-    void updateLike(Long userId, Long postingId);
+    void updateLikeCount(Long postingId, Boolean isLike);
 
-    void updateDislike(Long userId, Long postingId);
+    void updateDisLikeCount(Long postingId, Boolean isDisLike);
 
     void updatePosting(Long userId, Long postingId, UpdatePostingRequestDTO updatePostingRequestDTO);
 }

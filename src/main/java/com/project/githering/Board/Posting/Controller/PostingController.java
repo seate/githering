@@ -69,22 +69,6 @@ public class PostingController {
 
 
     //UPDATE
-    @PatchMapping("/{postingId}/like")
-    public ResponseEntity<Void> updateLike(@PathVariable Long postingId) {
-        Long userId = generalUserService.findIdByAuthentication();
-        postingService.updateLike(userId, postingId);
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @PatchMapping("/{postingId}/dislike")
-    public ResponseEntity<Void> updateDislike(@PathVariable Long postingId) {
-        Long userId = generalUserService.findIdByAuthentication();
-        postingService.updateDislike(userId, postingId);
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
     @PatchMapping("/{postingId}")
     public ResponseEntity<Void> updatePosting(@PathVariable Long postingId, @RequestBody @Valid UpdatePostingRequestDTO updatePostingRequestDTO) {
         Long userId = generalUserService.findIdByAuthentication();
