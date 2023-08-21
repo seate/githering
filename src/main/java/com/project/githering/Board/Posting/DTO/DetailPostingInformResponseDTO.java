@@ -1,5 +1,6 @@
 package com.project.githering.Board.Posting.DTO;
 
+import com.project.githering.Board.Posting.Addon.Comment.DTO.CommentResponseListDTO;
 import com.project.githering.Board.Posting.Entity.Posting;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -25,6 +26,9 @@ public class DetailPostingInformResponseDTO {
     private String title;
 
     @NotBlank
+    private String content;
+
+    @NotBlank
     private String userName;
 
     @NotNull
@@ -39,15 +43,20 @@ public class DetailPostingInformResponseDTO {
     @NotNull
     private Integer dislikeCount;
 
-    public DetailPostingInformResponseDTO(String categoryName, String userName, Posting posting) {
+    @NotNull
+    private CommentResponseListDTO commentResponseListDTO;
+
+    public DetailPostingInformResponseDTO(String categoryName, String userName, CommentResponseListDTO commentResponseListDTO, Posting posting) {
         this.postingId = posting.getPostingId();
         this.groupId = posting.getGroupId();
         this.categoryName = categoryName;
         this.title = posting.getTitle();
+        this.content = posting.getContent();
         this.userName = userName;
         this.viewCount = posting.getViewCount();
         this.createdDate = posting.getCreateTime().toLocalDate();
         this.likeCount = posting.getLikeCount();
         this.dislikeCount = posting.getDislikeCount();
+        this.commentResponseListDTO = commentResponseListDTO;
     }
 }

@@ -1,6 +1,8 @@
 package com.project.githering.Board.Posting.Service;
 
 import com.project.githering.Board.BoardCategory.Service.BoardCategoryService;
+import com.project.githering.Board.Posting.Addon.Comment.DTO.CommentResponseListDTO;
+import com.project.githering.Board.Posting.Addon.Comment.Service.CommentService;
 import com.project.githering.Board.Posting.DTO.CreatePostingRequestDTO;
 import com.project.githering.Board.Posting.DTO.DetailPostingInformResponseDTO;
 import com.project.githering.Board.Posting.DTO.SimplePostingInformResponseDTO;
@@ -31,6 +33,8 @@ public class PostingServiceImpl implements PostingService {
     private final GeneralUserService generalUserService;
 
     private final BoardCategoryService boardCategoryService;
+
+    private final CommentService commentService;
 
 
     //CREATE
@@ -76,7 +80,9 @@ public class PostingServiceImpl implements PostingService {
                 .orElseThrow(UserNotExistException::new).getUserName();
         String categoryName = boardCategoryService.findCategoryNameByCategoryId(posting.getCategoryId());
 
-        return new DetailPostingInformResponseDTO(categoryName, userName, posting);
+        CommentResponseListDTO commentList = commentService.findAllCommentByPostingId(postingId);
+
+        return new DetailPostingInformResponseDTO(categoryName, userName, commentList, posting);
     }
 
     @Override
