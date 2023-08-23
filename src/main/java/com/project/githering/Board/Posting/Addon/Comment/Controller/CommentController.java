@@ -2,6 +2,7 @@ package com.project.githering.Board.Posting.Addon.Comment.Controller;
 
 import com.project.githering.Board.Posting.Addon.Comment.DTO.CommentResponseListDTO;
 import com.project.githering.Board.Posting.Addon.Comment.DTO.CreateCommentRequestDTO;
+import com.project.githering.Board.Posting.Addon.Comment.DTO.UpdateCommentRequestDTO;
 import com.project.githering.Board.Posting.Addon.Comment.Service.CommentService;
 import com.project.githering.User.General.Service.GeneralUserService;
 import jakarta.validation.Valid;
@@ -41,9 +42,11 @@ public class CommentController {
         return new ResponseEntity<>(commentService.findAllCommentByPostingId(postingId), HttpStatus.OK);
     }
 
-    /*@GetMapping("/user/{userId}")
-    public ResponseEntity<List<CommentResponseDTO>> findAllCommentByUserId(@PathVariable Long userId, Pageable pageable) {
-        List<CommentResponseDTO> commentList = commentService.findAllCommentByUserId(userId, pageable).getContent();
-        return new ResponseEntity<>(commentList, HttpStatus.OK);
-    }*/
+    @PatchMapping
+    public ResponseEntity<Void> updateComment(@RequestBody @Valid UpdateCommentRequestDTO updateCommentRequestDTO) {
+        Long userId = generalUserService.findIdByAuthentication();
+        commentService.updateComment(userId, updateCommentRequestDTO);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

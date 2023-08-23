@@ -3,6 +3,7 @@ package com.project.githering.Board.Posting.Addon.Comment.Service;
 
 import com.project.githering.Board.Posting.Addon.Comment.DTO.CommentResponseListDTO;
 import com.project.githering.Board.Posting.Addon.Comment.DTO.CreateCommentRequestDTO;
+import com.project.githering.Board.Posting.Addon.Comment.DTO.UpdateCommentRequestDTO;
 
 public interface CommentService {
 
@@ -18,4 +19,7 @@ public interface CommentService {
     CommentResponseListDTO findAllCommentByPostingId(Long postingId);
 
     //Page<CommentResponseDTO> findAllCommentByUserId(Long userId, Pageable pageable);
+
+    //UPDATE
+    void updateComment(Long userId, UpdateCommentRequestDTO updateCommentRequestDTO);
 }

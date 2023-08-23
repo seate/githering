@@ -3,6 +3,7 @@ package com.project.githering.Board.Posting.Addon.Comment.Service;
 import com.project.githering.Board.Posting.Addon.Comment.DTO.CommentResponseDTO;
 import com.project.githering.Board.Posting.Addon.Comment.DTO.CommentResponseListDTO;
 import com.project.githering.Board.Posting.Addon.Comment.DTO.CreateCommentRequestDTO;
+import com.project.githering.Board.Posting.Addon.Comment.DTO.UpdateCommentRequestDTO;
 import com.project.githering.Board.Posting.Addon.Comment.Entity.Comment;
 import com.project.githering.Board.Posting.Addon.Comment.Exception.CommentNotExistException;
 import com.project.githering.Board.Posting.Addon.Comment.Repository.CommentRepository;
@@ -12,6 +13,7 @@ import com.project.githering.User.General.Service.GeneralUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +28,7 @@ public class CommentServiceImpl implements CommentService {
     private final GeneralUserService generalUserService;
 
     @Override
+    @Transactional
     public Long saveComment(Long userId, CreateCommentRequestDTO createCommentRequestDTO) {
 
         Long parentCommentId = createCommentRequestDTO.getParentCommentId();
@@ -42,6 +45,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
     public void deleteComment(Long userId, Long commentId) {
         Comment comment = findCommentById(commentId).orElseThrow(CommentNotExistException::new);
         if (!comment.getUserId().equals(userId)) throw new NoAuthorityException();
@@ -67,15 +71,15 @@ public class CommentServiceImpl implements CommentService {
         return new CommentResponseListDTO(list);
     }
 
-    /*@Override
-    public Page<CommentResponseDTO> findAllCommentByUserId(Long userId, Pageable pageable) {
-        return commentRepository.findAllByUserId(userId, pageable)
-                .map(comment -> {
-                    String userName = generalUserService.findById(comment.getUserId())
-                    .orElseThrow(UserNotExistException::new)
-                    .getUserName();
+    //UPDATE
+    @Override
+    @Transactional
+    public void updateComment(Long userId, UpdateCommentRequestDTO updateCommentRequestDTO) {
+        Comment comment = findCommentById(updateCommentRequestDTO.getCommentId())
+                .orElseThrow(CommentNotExistException::new);
 
-                    return new CommentResponseDTO(userName, comment);
-                });
-    }*/
+        if (!comment.getUserId().equals(userId)) throw new NoAuthorityException();
+
+        comment.setContent(updateCommentRequestDTO.getContent());
+    }
 }
