@@ -32,6 +32,12 @@ spring:
     profiles:
         include: oauth2
 
+    rabbitmq:
+        username: guest
+        password: guest
+        host: localhost
+        port: 5672
+
 
 
 
@@ -57,6 +63,11 @@ Cors:
 springdoc:
     show-login-endpoint: true
 
-
+logging:
+    level:
+      org:
+          springframework:
+              web:
+                  socket: trace
 
 debug: true

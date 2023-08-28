@@ -37,3 +37,4 @@ out/
 .vscode/
 /src/main/resources/application-oauth2.yml
 /src/main/java/com/project/githering/InitDB.java
+/src/main/java/com/project/githering/TODO.txt

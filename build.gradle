@@ -50,6 +50,19 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 
+
+ 	//=============================chatting=============================
+	//외부 브로커를 사용하기 위해서
+	implementation 'org.springframework.boot:spring-boot-starter-reactor-netty'
+
+	implementation 'org.springframework.boot:spring-boot-starter-amqp'
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation 'org.webjars:sockjs-client:1.1.2'
+	implementation 'org.webjars:stomp-websocket:2.3.3-1'
+
+	testImplementation 'org.springframework.amqp:spring-rabbit-test'
+
+
 	// springdoc swagger 설정
 	implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.0.4'
 
