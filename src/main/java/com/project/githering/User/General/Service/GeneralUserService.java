@@ -28,6 +28,7 @@ public interface GeneralUserService extends OAuth2UserService<OAuth2UserRequest,
 
     List<GeneralUser> findAllAdmin();
 
+    GeneralUser findByAuthentication();
 
     Long findIdByAuthentication();
 

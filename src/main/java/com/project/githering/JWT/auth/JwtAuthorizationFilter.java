@@ -51,7 +51,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 new AntPathRequestMatcher("/swagger-ui/**", HttpMethod.GET.name()),
                 new AntPathRequestMatcher("/v3/api-docs/**", HttpMethod.GET.name()),
 
-                new AntPathRequestMatcher("/assets/**", HttpMethod.GET.name())
+                new AntPathRequestMatcher("/assets/**", HttpMethod.GET.name()),
+                new AntPathRequestMatcher("/stomp/chat/**", HttpMethod.GET.name()) //채팅을 위해서 해제
         );
     }
 
@@ -79,10 +80,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                     new UsernamePasswordAuthenticationToken(
                             generalUser,
                             null,
-                            generalUserService.findById(userId)
+                            /*generalUserService.findById(userId)
                                     .map(PrincipalDetails::new)
                                     .orElseThrow(TokenNotValidException::new)
-                                    .getAuthorities()
+                                    .getAuthorities()*/
+                            new PrincipalDetails(generalUser).getAuthorities()
                     )
             );
 

@@ -113,11 +113,14 @@ public class GeneralUserServiceImpl implements GeneralUserService {
         return generalUserRepository.findAllByRole(Role.ROLE_ADMIN);
     }
 
+    @Override
+    public GeneralUser findByAuthentication() {
+        return (GeneralUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
 
     @Override
     public Long findIdByAuthentication() {
-        GeneralUser generalUser = (GeneralUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return generalUser.getId();
+        return findByAuthentication().getId();
     }
 
 
