@@ -1,13 +1,11 @@
 package com.project.githering.Common.Config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.githering.JWT.Service.LogoutAccessTokenService;
-import com.project.githering.JWT.Service.RefreshTokenService;
 import com.project.githering.JWT.auth.JwtAuthorizationFilter;
 import com.project.githering.JWT.auth.JwtTokenProvider;
+import com.project.githering.User.General.Service.GeneralUserService;
 import com.project.githering.User.OAuth2.Handler.oAuth2AuthenticationFailureHandler;
 import com.project.githering.User.OAuth2.Handler.oAuth2AuthenticationSuccessHandler;
-import com.project.githering.User.General.Service.GeneralUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +14,6 @@ import org.springframework.security.access.expression.method.MethodSecurityExpre
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -34,13 +31,9 @@ import org.springframework.web.cors.CorsConfigurationSource;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final ObjectMapper objectMapper;
-
     private final CorsConfigurationSource corsConfigurationSource;
 
     private final JwtTokenProvider jwtTokenProvider;
-
-    private final RefreshTokenService refreshTokenService;
 
     private final GeneralUserService generalUserService;
 
@@ -65,8 +58,7 @@ public class SecurityConfig {
                 )
 
                 .csrf(AbstractHttpConfigurer::disable)
-                //.formLogin(AbstractHttpConfigurer::disable)
-                .formLogin(Customizer.withDefaults()) // TODO 실험용 form login
+                .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
 
                 .headers(headers ->

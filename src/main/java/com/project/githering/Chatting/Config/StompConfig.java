@@ -1,5 +1,7 @@
 package com.project.githering.Chatting.Config;
 
+import com.project.githering.Chatting.StompUtil.StompCustomErrorHandler;
+import com.project.githering.Chatting.StompUtil.StompPreHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
@@ -14,13 +16,18 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class StompConfig implements WebSocketMessageBrokerConfigurer {
 
-    private final StompInterceptor stompInterceptor;
+    private final StompPreHandler stompPreHandler;
+
+    private final StompCustomErrorHandler stompCustomErrorHandler;
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/stomp/chat")
+        registry
+                .addEndpoint("/stomp/chat")
                 .setAllowedOriginPatterns("*")
                 .withSockJS();
+
+        registry.setErrorHandler(stompCustomErrorHandler);
     }
 
     @Override
@@ -37,6 +44,6 @@ public class StompConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(stompInterceptor);
+        registration.interceptors(stompPreHandler);
     }
 }

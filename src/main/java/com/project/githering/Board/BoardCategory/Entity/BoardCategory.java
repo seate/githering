@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @NoArgsConstructor
-@Table(indexes = @Index(name = "idx_groupId", columnList = "groupId"))
+@Table(indexes = @Index(name = "board_category_idx_groupId", columnList = "groupId"))
 public class BoardCategory extends BaseTimeEntity {
 
     @Id

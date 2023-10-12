@@ -20,7 +20,7 @@ import org.hibernate.annotations.SQLDelete;
         parameters = @ParamDef(name = "isDeleted", type = Boolean.class),
         defaultCondition = "deleted = false") //필터를 활성화했을 때 기본적으로 적용
 @Filter(name = "softDeleteGeneralUserFilter", condition = "deleted = :isDeleted") //필터 이름을 수정하면 Service의 @DeletedFind도 수정해야함
-@Table(name = "general_user", indexes = {@Index(name = "id_index", columnList = "id")})
+@Table(name = "general_user")
 public class GeneralUser extends BaseTimeEntity {
 
     @Id

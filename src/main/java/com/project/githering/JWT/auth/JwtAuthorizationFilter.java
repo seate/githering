@@ -45,9 +45,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
                 new AntPathRequestMatcher("/token/reIssue", HttpMethod.POST.name()),
 
-                new AntPathRequestMatcher("/", HttpMethod.GET.name()),
-                new AntPathRequestMatcher("/login", HttpMethod.GET.name()), //TODO form login 제외 시 해제
-
                 new AntPathRequestMatcher("/swagger-ui/**", HttpMethod.GET.name()),
                 new AntPathRequestMatcher("/v3/api-docs/**", HttpMethod.GET.name()),
 

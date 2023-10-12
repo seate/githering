@@ -1,12 +1,13 @@
-package com.project.githering.Chatting.Config;
+package com.project.githering.Chatting.StompUtil;
 
 import com.project.githering.Chatting.ChatRoom.Exception.NoAuthorityException;
 import com.project.githering.Chatting.ChatRoom.Service.ChatRoomService;
+import com.project.githering.JWT.Exception.AccessTokenExpiredException;
+import com.project.githering.JWT.Exception.AccessTokenNotExistException;
+import com.project.githering.JWT.Exception.TokenNotValidException;
 import com.project.githering.JWT.auth.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -18,8 +19,7 @@ import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
-@Order(Ordered.HIGHEST_PRECEDENCE) // security filter 이전에 실행되도록 설정
-public class StompInterceptor implements ChannelInterceptor {
+public class StompPreHandler implements ChannelInterceptor {
 
     private final ChatRoomService chatRoomService;
 
@@ -49,20 +49,36 @@ public class StompInterceptor implements ChannelInterceptor {
         return ChannelInterceptor.super.preSend(message, channel);
     }
 
-    private String validateAccessToken(StompHeaderAccessor accessor) {
-        String accessToken = String.valueOf(accessor.getNativeHeader(accessTokenHeaderName).get(0));
+    private String validateAccessToken(StompHeaderAccessor accessor)
+            throws AccessTokenExpiredException, AccessTokenNotExistException, TokenNotValidException {
+
+        String accessToken = null;
+        try {
+            accessToken = String.valueOf(Objects.requireNonNull(accessor.getNativeHeader(accessTokenHeaderName)).get(0));
+        } catch (NullPointerException e) {
+            throw new AccessTokenNotExistException();
+        }
+
         jwtTokenProvider.validateAccessToken(accessToken);
         return accessToken;
     }
 
-    private Boolean validate(StompHeaderAccessor accessor) {
+    private Boolean validate(StompHeaderAccessor accessor)
+            throws AccessTokenExpiredException, AccessTokenNotExistException,
+            TokenNotValidException, NullPointerException {
+
         //accessToken 검증
         String accessToken = validateAccessToken(accessor);
         Long userId = jwtTokenProvider.getUserIdByAccessToken(accessToken);
 
         // 채팅방에 포함되어 있는지 검증
         String destination = accessor.getDestination();
-        Long chatRoomId = Long.parseLong(Objects.requireNonNull(destination).substring(destination.lastIndexOf('.') + 1));
+        if (destination == null)
+            throw new NullPointerException("destination is null");
+
+        Long chatRoomId = Long.parseLong(
+                destination.substring(destination.lastIndexOf('.') + 1)
+        );
 
         return chatRoomService.isMember(userId, chatRoomId);
     }

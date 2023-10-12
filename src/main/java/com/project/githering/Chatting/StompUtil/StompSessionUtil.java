@@ -1,4 +1,4 @@
-package com.project.githering.Chatting.Config;
+package com.project.githering.Chatting.StompUtil;
 
 import com.project.githering.JWT.auth.JwtTokenProvider;
 import com.project.githering.User.General.Entity.GeneralUser;

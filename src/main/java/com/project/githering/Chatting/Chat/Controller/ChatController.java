@@ -4,7 +4,7 @@ import com.project.githering.Chatting.Chat.DTO.ChatResponseListDTO;
 import com.project.githering.Chatting.Chat.DTO.CreateChatRequestDTO;
 import com.project.githering.Chatting.Chat.Entity.Chat;
 import com.project.githering.Chatting.Chat.Service.ChatService;
-import com.project.githering.Chatting.Config.StompSessionUtil;
+import com.project.githering.Chatting.StompUtil.StompSessionUtil;
 import com.project.githering.User.General.Entity.GeneralUser;
 import com.project.githering.User.General.Service.GeneralUserService;
 import lombok.RequiredArgsConstructor;
